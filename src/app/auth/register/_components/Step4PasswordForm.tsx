@@ -28,7 +28,7 @@ export default function Step4PasswordForm({
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const router = useRouter();
 
-    const { mutateAsync: registerAsync, isPending: registerIsPending, data: registerData } = register();
+    const { mutateAsync: registerAsync, } = register();
 
     const formCreatePassword = useForm<CreatePasswordType>({
         resolver: zodResolver(createPasswordSchema),
@@ -44,23 +44,25 @@ export default function Step4PasswordForm({
 
 
     async function onSubmitCreatePassword(data: CreatePasswordType) {
-        console.log(data);
-        console.log(userInfo)
         const { firstName, lastName, phone, username, email } = userInfo
-        const res = await registerAsync({
-            firstName,
-            lastName,
-            phone,
-            username,
-            email: email!,
-            password: data.password,
-            confirmPassword: data.confirmPassword,
-        });
+        try {
+            const res = await registerAsync({
+                firstName,
+                lastName,
+                phone,
+                username,
+                email: email!,
+                password: data.password,
+                confirmPassword: data.confirmPassword,
+            });
 
-        router.push("/auth/login");
+            router.push("/auth/login");
 
-
-        toast.success("Registration successful");
+            toast.success(res.message || "Registration successful");
+        } catch (error) {
+            const message = error as Error
+            toast.error(message.message || "Registration failed");
+        }
     }
 
     return (
