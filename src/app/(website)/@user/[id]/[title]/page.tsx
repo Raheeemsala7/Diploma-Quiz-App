@@ -1,34 +1,37 @@
-import { BookOpenCheck, ChevronLeft } from "lucide-react";
-import Link from "next/link";
-import ExamsList from "../../../../../features/exams/_components/exams-list";
-
+import { ChevronLeft } from "lucide-react"
+import Link from "next/link"
+import ExamsList from "../../../../../features/exams/_components/exams-list"
 
 interface IPageProps {
   params: Promise<{
-    id: string;
-    title: string;
+    id: string
+    title: string
   }>
 }
 
 const Page = async ({ params }: IPageProps) => {
-  let { id, title } = await params
-  
-  console.log(id,title)
+  const { id, title } = await params
 
   return (
-    <>
-      <div className="flex items-center gap-4">
-        <Link href={"/"} className="py-4 px-1 border border-blue-600">
-          <ChevronLeft className="text-blue-600 size-6" />
+    <section className="space-y-6">
+      <header className="flex items-center gap-3">
+        <Link
+          href="/"
+          aria-label="Back to diplomas"
+          className="grid size-10 shrink-0 place-items-center rounded-lg border border-border bg-card text-foreground transition-colors hover:bg-muted"
+        >
+          <ChevronLeft className="size-5" />
         </Link>
-        <div className="flex gap-3 items-center bg-blue-600 flex-1 px-3 py-3">
-          <BookOpenCheck className="size-10 text-white" />
-          <h6 className="text-3xl font-semibold text-white">{title}</h6>
+        <div className="min-w-0">
+          <p className="text-sm text-muted-foreground">Diploma</p>
+          <h1 className="truncate text-2xl font-semibold tracking-tight">
+            {title}
+          </h1>
         </div>
-      </div>
+      </header>
       <ExamsList id={id} />
-    </>
+    </section>
   )
-};
+}
 
-export default Page;
+export default Page

@@ -92,7 +92,6 @@ export const getMultiQuestionApi = async ({ req, id}: { req: NextRequest; id: st
     if (!data.status) {
         throw new Error(data.message || "Something went wrong");
     }
-    console.log("DATA QUE :", data.payload.questions[0].answers)
     return data as IApiResponse<{questions : IQueItem[]}>
 }
 

@@ -17,29 +17,25 @@ export function TimerCircle({ total, remaining }: TimerCircleProps) {
 
     const display = `${String(mm).padStart(2, "0")}:${String(ss).padStart(2, "0")}`;
 
-    
-
     return (
-        <div className="relative size-16 flex items-center justify-center">
-            <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 44 44">
+        <div className="relative flex size-16 items-center justify-center">
+            <svg className="absolute inset-0 -rotate-90" viewBox="0 0 44 44">
 
-                {/* الفاضي */}
                 <circle
                     cx="22"
                     cy="22"
                     r={radius}
                     fill="none"
-                    className="stroke-blue-100"
+                    className="stroke-muted"
                     strokeWidth="3"
                 />
 
-                {/* المليان */}
                 <circle
                     cx="22"
                     cy="22"
                     r={radius}
                     fill="none"
-                    className={isDanger ? "stroke-red-500" : "stroke-blue-600"}
+                    className={isDanger ? "stroke-destructive" : "stroke-primary"}
                     strokeWidth="3"
                     strokeLinecap="round"
                     strokeDasharray={circumference}
@@ -49,7 +45,7 @@ export function TimerCircle({ total, remaining }: TimerCircleProps) {
             </svg>
 
             <span
-                className={isDanger ? "text-red-500 text-xs font-bold" : "text-slate-700 text-xs font-bold"}
+                className={isDanger ? "text-xs font-bold text-destructive" : "text-xs font-bold text-foreground"}
             >
                 {display}
             </span>

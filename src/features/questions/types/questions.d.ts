@@ -1,5 +1,3 @@
-import { Timestamp } from "next/dist/server/lib/cache-handlers/types";
-
 // export interface IQuestion extends Timestamp {
 //     questions: {
 //         id: string
@@ -91,8 +89,8 @@ export interface IQuestionInfo {
         createdAt: string
         updatedAt: string
         answers: {
-            id: string
-            text: string
+            id?: string
+            text: string    
             isCorrect: boolean
         }[];
         exam: {
@@ -131,8 +129,18 @@ interface IQuestionBulk {
     }[]
 }
 
-export interface IQuestionUpdate {
-    id: string
+export interface ICreateQuestion {
     text: string
-    answers: Answer[]
+    answers: {
+        text: string
+        isCorrect: boolean
+    }[]
+}
+
+export interface IQuestionUpdate {
+    text: string
+    answers: {
+        text: string
+        isCorrect: boolean
+    }[]
 }

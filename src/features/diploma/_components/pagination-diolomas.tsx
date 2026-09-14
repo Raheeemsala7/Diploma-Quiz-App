@@ -31,42 +31,40 @@ export function PaginationDiplomas({ currentPage, totalItems, totalPages, limit 
     };
 
     return (
-        <div className="flex justify-between px-4 py-3 bg-white border border-gray-200">
+        <div className="flex flex-col gap-3 rounded-lg border border-border bg-card px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center justify-start gap-4 ">
-                <div className="text-sm text-gray-800 font-mono">
-                    <span className="font-semibold text-gray-800">{startItem}</span> - <span className="font-semibold text-gray-800">{endItem}</span> of {' '}
-                    <span className="font-semibold text-gray-800">{totalItems}</span>
+                <div className="text-sm text-foreground">
+                    <span className="font-semibold">{startItem}</span> - <span className="font-semibold">{endItem}</span> of{' '}
+                    <span className="font-semibold">{totalItems}</span>
                 </div>
 
 
 
-                <div className="flex gap-3 items-center border border-gray-200">
+                <div className="flex gap-3 items-center">
                     <Button
                         variant="outline"
-                        size="sm"
+                        size="icon-sm"
                         onClick={() => onPageChange(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="px-2 bg-gray-200 rounded-none size-10"
                     >
                         <ChevronLeft size={18} />
                     </Button>
-                    <div className="text-sm text-gray-400 ">
-                        Page <span>{currentPage}</span> of{' '}
-                        <span>{totalPages}</span>
+                    <div className="text-sm whitespace-nowrap text-muted-foreground">
+                        Page <span className="font-medium text-foreground">{currentPage}</span> of{' '}
+                        <span className="font-medium text-foreground">{totalPages}</span>
                     </div>
                     <Button
                         variant="outline"
-                        size="sm"
+                        size="icon-sm"
                         onClick={() => onPageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="px-2 bg-gray-200 rounded-none size-10"
                     >
                         <ChevronRight size={18} />
                     </Button>
                 </div>
             </div>
 
-            <Link href={"/create-new-diploma"} className={cn(buttonVariants(), "bg-emerald-500")} >
+            <Link href={"/create-new-diploma"} className={cn(buttonVariants())} >
                 <PlusIcon className='size-4' />
                 Create New Diploma
             </Link>

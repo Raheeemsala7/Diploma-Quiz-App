@@ -7,7 +7,7 @@ const SkeletonTable = () => {
         Array.from({ length: 5 }).map((_, index) => (
             <tr
                 key={index}
-                className={`border-t ${index % 2 === 0 ? "bg-white" : "bg-gray-50"}`}
+                className={`border-t ${index % 2 === 0 ? "bg-card" : "bg-muted/40"}`}
             >
                 {/* Image */}
                 <td className="px-4 py-3">

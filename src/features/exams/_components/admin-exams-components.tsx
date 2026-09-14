@@ -19,8 +19,8 @@ const AdminExamsComponents = () => {
     return (
         <>
             <PaginationExams currentPage={examsMeta?.page || 1} limit={examsMeta?.limit || 12} totalItems={examsMeta?.total || 12} totalPages={examsMeta?.totalPages || 1} />
-            <div className='p-6'>
-                <SearchFilters  />
+            <div className="space-y-4">
+                <SearchFilters />
                 <ExamsTable isFetching={isFetching} isLoading={isLoading} isPending={isPending} exams={examsData || []} />
             </div>
         </>

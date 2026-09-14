@@ -1,6 +1,6 @@
 "use client"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { ExamQuestion, IQueItem, IQuestionBulk, IQuestionInfo, IQuestionUpdate } from "../types/questions"
+import { ICreateQuestion, IQueItem, IQuestionBulk, IQuestionInfo, IQuestionUpdate } from "../types/questions"
 import { HEADERS } from "@/src/shared/constant/api.constant"
 import { IApiResponse } from "@/src/shared/lib/types/api"
 
@@ -25,8 +25,8 @@ export const useGetQuestions = ({ examId }: { examId: string }) => {
 export const useCreateSingleQuestion = () => {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: async ({ values, id }: { values: ExamQuestion, id: string }) => {
-            const res = await fetch(`/api/exams/${id}/question`, {
+        mutationFn: async ({ values, examId }: { values: ICreateQuestion, examId: string }) => {
+            const res = await fetch(`/api/exams/${examId}/question`, {
                 method: "POST",
                 body: JSON.stringify(values),
                 headers: {
@@ -41,12 +41,11 @@ export const useCreateSingleQuestion = () => {
             }
             return data
         },
-        onSuccess(data) {
-            console.log(data)
+        onSuccess() {
             queryClient.invalidateQueries({ queryKey: ["admin-exams"] })
         },
-        onError(error) {
-            console.log(error)
+        onError() {
+            queryClient.invalidateQueries({ queryKey: ["admin-questions"] })
         }
     })
 }
@@ -69,12 +68,11 @@ export const useCreateMultiBulkQuestion = () => {
             }
             return data
         },
-        onSuccess(data) {
-            console.log(data)
+        onSuccess() {
             queryClient.invalidateQueries({ queryKey: ["admin-exams"] })
         },
-        onError(error) {
-            console.log(error)
+        onError() {
+            queryClient.invalidateQueries({ queryKey: ["admin-questions"] })
         }
     })
 }
@@ -100,12 +98,11 @@ export const useUpdateSingleQuestion = () => {
             }
             return data
         },
-        onSuccess(data) {
-            console.log(data)
+        onSuccess() {
             queryClient.invalidateQueries({ queryKey: ["admin-exams"] })
         },
-        onError(error) {
-            console.log(error)
+        onError() {
+            queryClient.invalidateQueries({ queryKey: ["admin-questions"] })
         }
     })
 }

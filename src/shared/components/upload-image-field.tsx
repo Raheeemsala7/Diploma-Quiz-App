@@ -92,35 +92,35 @@ const UploadImageField = ({ isEdit, url }: IProps) => {
             control={form.control}
             render={({ field: { value: _value, onChange, ...field }, fieldState }) => (
                 <Field>
-                    <FieldLabel className="font-mono">
+                    <FieldLabel>
                         Image
                     </FieldLabel>
                     <div>
                         {uploadedImage && preview ? (
-                            <div className="p-1.5 flex items-center gap-2 bg-gray-50 border border-gray-200 cursor-pointer">
+                            <div className="p-1.5 flex items-center gap-2 bg-muted/40 border border-border cursor-pointer rounded-lg">
 
                                 {/* IMAGE PREVIEW */}
                                 <img
                                     src={preview || ""}
                                     alt="uploaded"
-                                    className="w-21.5 h-21.5 object-cover"
+                                    className="w-21.5 h-21.5 object-cover rounded-md"
                                 />
 
                                 {/* INFO */}
-                                <div className="text-sm font-mono flex-1">
-                                    <p className='text-gray-600'> {uploadedImage.name}</p>
+                                <div className="text-sm flex-1 min-w-0">
+                                    <p className='text-muted-foreground truncate'> {uploadedImage.name}</p>
                                 </div>
 
-                                <div className="flex gap-2 p-2.5">
+                                <div className="flex gap-2 p-2.5 items-center">
 
-                                    <p className="text-gray-400 border-r border-gray-200 px-3">{(uploadedImage.size / 1024).toFixed(2)} KB</p>
+                                    <p className="text-muted-foreground/70 border-r border-border pr-3 hidden sm:block">{(uploadedImage.size / 1024).toFixed(2)} KB</p>
 
                                     <div className='flex gap-1.5 items-center'>
                                         {/* DOWNLOAD */}
                                         <a
                                             href={preview}
                                             download
-                                            className=" text-blue-500 text-sm "
+                                            className="text-primary"
                                         >
                                             <Download />
                                         </a>
@@ -133,7 +133,7 @@ const UploadImageField = ({ isEdit, url }: IProps) => {
                                                 diplomaForm.setValue("image", "")
                                                 form.reset()
                                             }}
-                                            className=" text-red-500  text-sm "
+                                            className="text-destructive"
                                         >
                                             <Trash2 />
                                         </button>
@@ -143,13 +143,13 @@ const UploadImageField = ({ isEdit, url }: IProps) => {
                                 </div>
                             </div>
                         ) : (
-                            <div className="h-22 p-6 border border-gray-200 flex justify-center items-center relative" onClick={() => inputRef.current?.click()}>
-                                <span className='absolute left-6 top-6'>
-                                    <FileImage className='size-10 text-gray-200' />
+                            <div className="h-22 p-6 border border-dashed border-border rounded-lg flex justify-center items-center relative hover:bg-muted/40 transition-colors cursor-pointer" onClick={() => inputRef.current?.click()}>
+                                <span className='absolute left-6 top-6 text-muted-foreground/25'>
+                                    <FileImage className='size-10' />
                                 </span>
-                                <p className='text-xs flex items-center gap-1 text-gray-600 font-mono'><CloudUploadIcon /> Drop an image here or <span className='text-blue-600'>select from your computer</span></p>
+                                <p className='text-sm flex items-center gap-1.5 text-muted-foreground'><CloudUploadIcon className='size-4' /> Drop an image here or <span className='text-primary font-medium'>select from your computer</span></p>
                                 <Input
-                                    className="rounded-sm px-4 py-6 border border-[#E5E7EB] font-mono hidden"
+                                    className="hidden"
                                     type="file"
                                     placeholder="Description"
                                     onChange={(e) => onChange(e.target.files?.[0])}

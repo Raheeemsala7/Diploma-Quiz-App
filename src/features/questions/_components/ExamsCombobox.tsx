@@ -1,6 +1,6 @@
 "use client";
 
-import {  memo, useState } from "react";
+import { memo, useState } from "react";
 
 import { useExamsSelect } from "../../exams/hooks/hooks";
 import { IExam } from "../../exams/types/exam";
@@ -15,31 +15,33 @@ interface Props {
  function ExamsComboboxComponent({ selectedId, diplomaId, onChange }: Props ) {
     const [open, setOpen] = useState(false);
 
-
-
-
     const { data, isLoading } = useExamsSelect({
         diplomaId,
     });
 
-    if (!data?.status || !data) {
-        return <p>ee</p>
+    if (isLoading) {
+        return (
+            <Select open={false}>
+                <SelectTrigger className="w-full" disabled>
+                    <SelectValue placeholder="Loading exams..." />
+                </SelectTrigger>
+            </Select>
+        );
     }
 
-        console.log("RENDER FORM COM EXAMS COMBOBOX")
-    
+    if (!data?.status) {
+        return null;
+    }
+
     const exams = data.payload.data || [];
 
     const selectedExam = exams.find((e: IExam) => e.id === selectedId);
-
-
 
     return (
         <Select
             value={selectedId}
             onValueChange={(val) => {
                 onChange(val);
-                // onChange?.(val);
             }}
             open={open}
             onOpenChange={setOpen}

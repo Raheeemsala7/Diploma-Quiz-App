@@ -1,17 +1,20 @@
+import DiplomasList from "@/src/features/diploma/_components/diplomas-list-infinite"
+import { GraduationCap } from "lucide-react"
 
-import DiplomasList from '@/src/features/diploma/_components/diplomas-list-infinite'
-import {  LucideGraduationCap } from 'lucide-react'
-
-const userPage =  () => {
-
-
-
+const userPage = () => {
   return (
-    <main className="w-full">
-      <div className="bg-blue-600 flex items-center gap-3 p-4  w-full">
-        <LucideGraduationCap className='text-white size-12' />
-        <h4 className='text-3xl text-white font-semibold'>Diplomas</h4>
-      </div>
+    <main className="w-full space-y-6">
+      <header className="flex items-center gap-4 rounded-lg border border-border bg-card p-5">
+        <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
+          <GraduationCap className="size-6" />
+        </span>
+        <div>
+          <h4 className="text-xl font-semibold tracking-tight">Diplomas</h4>
+          <p className="mt-0.5 text-sm text-muted-foreground">
+            Pick a track and start exploring your exams.
+          </p>
+        </div>
+      </header>
 
       <DiplomasList />
     </main>

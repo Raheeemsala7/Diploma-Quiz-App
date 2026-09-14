@@ -20,7 +20,7 @@ function RadioGroup({
 
 function RadioGroupItem({
   className,
-  indicatorClassName = "blue",
+  indicatorClassName = "primary",
   ...props
 }: React.ComponentProps<typeof RadioGroupPrimitive.Item> & {
   indicatorClassName?: string
@@ -36,13 +36,17 @@ function RadioGroupItem({
     bg: "bg-red-600",
     border: "border-red-600",
   },
+  primary: {
+    bg: "bg-primary",
+    border: "border-primary",
+  },
   blue: {
-    bg: "bg-blue-600",
-    border: "border-blue-600",
+    bg: "bg-primary",
+    border: "border-primary",
   },
 }
 
-  const color = colorMap[indicatorClassName] ?? colorMap.emerald
+  const color = colorMap[indicatorClassName] ?? colorMap.primary
 
 
 

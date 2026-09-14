@@ -15,10 +15,6 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
     const auditLog = data.payload.auditLog
 
-
-    console.log(auditLog)
-    console.log(auditLog.entityType)
-
     const handleLink = () => {
         switch (auditLog.entityType) {
             case "diploma":
@@ -52,64 +48,74 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
         return `${time} | ${fullDate}`;
     }
 
+    const detailRows = [
+        { label: "Action", value: auditLog.action },
+        { label: "Method", value: auditLog.httpMethod },
+        { label: "Date", value: formatDateTime(auditLog.createdAt) },
+    ];
+
     return (
-        <>
-            <div className="bg-white p-6">
-                <p className='text-lg text-black mb-2 font-semibold'>
+        <div className="space-y-4">
+            <div className="rounded-lg border border-border bg-card p-5">
+                <h1 className="text-lg font-semibold tracking-tight text-foreground">
                     {auditLog.category} {auditLog.httpMethod} By {auditLog.actorUsername}
-                </p>
-                <div>
-                    <p> Entity : </p>
-                    <Link className='text-gray-400 underline' href={handleLink()}>{auditLog.entityType} [{auditLog.entityId}] <ExternalLink className='text-gray-400' /></Link>
+                </h1>
+                <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+                    <span className="font-medium">Entity :</span>
+                    <Link
+                        className="flex items-center gap-1 text-primary underline underline-offset-4"
+                        href={handleLink()}
+                    >
+                        {auditLog.entityType} [{auditLog.entityId}]
+                        <ExternalLink className='text-muted-foreground' />
+                    </Link>
                 </div>
             </div>
 
-            <div className='p-6'>
-                <div className="bg-white p-4 space-y-4">
-                    <div>
-                        <p className='text-gray-400 mb-1 font-mono'>Action</p>
-                        <p className='font-mono'>{auditLog.action}</p>
-                    </div>
-                    <div>
-                        <p className='text-gray-400 mb-1 font-mono'>Method</p>
-                        <p className='font-mono'>{auditLog.httpMethod}</p>
-                    </div>
-                    <div>
-                        <p className='text-gray-400 mb-1 font-mono'>User</p>
-                        <p className='font-mono text-sm'>{auditLog.actorUsername}</p>
-                        <p className='font-mono text-sm text-gray-500'>Email : {auditLog.actorEmail}</p>
-                        <p className='font-mono text-sm text-gray-500'>IP Address : {auditLog.ipAddress}</p>
-                        <p className='font-mono text-sm text-gray-500'>Role : {auditLog.actorRole}</p>
-                    </div>
-                    <div>
-                        <p className='text-gray-400 mb-1 font-mono'>Entity</p>
-                        <Link className=' underline' href={handleLink()}>{auditLog.entityType} [{auditLog.entityId}]</Link>
-                    </div>
-                    <div>
-                        <p className='text-gray-400 mb-1 font-mono'>Date</p>
-                        <p className='font-mono'>{formatDateTime(auditLog.createdAt)}</p>
-                    </div>
-                    {auditLog.metadata.keys && (
-                        <div>
-                            <p className='text-gray-400 mb-1 font-mono'>Updated Fields</p>
-                            <p className='font-mono'>{auditLog.metadata.keys.join(', ')}</p>
+            <div className="rounded-lg border border-border bg-card">
+                <div className="border-b border-border px-5 py-4">
+                    <p className="font-medium">Audit Log Details</p>
+                </div>
+                <div className="grid gap-4 p-5 sm:grid-cols-2">
+                    {detailRows.map((row) => (
+                        <div key={row.label}>
+                            <p className='mb-1 text-xs font-medium tracking-wide text-muted-foreground uppercase'>{row.label}</p>
+                            <p className='text-sm text-foreground'>{row.value}</p>
                         </div>
+                    ))}
 
-                    )}
+                    <div>
+                        <p className='mb-1 text-xs font-medium tracking-wide text-muted-foreground uppercase'>User</p>
+                        <div className="space-y-0.5 text-sm text-foreground">
+                            <p className="font-medium">{auditLog.actorUsername}</p>
+                            <p className="text-muted-foreground">Email : {auditLog.actorEmail}</p>
+                            <p className="text-muted-foreground">IP Address : {auditLog.ipAddress}</p>
+                            <p className="text-muted-foreground">Role : {auditLog.actorRole}</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <p className='mb-1 text-xs font-medium tracking-wide text-muted-foreground uppercase'>Entity</p>
+                        <Link className='text-sm text-primary underline underline-offset-4' href={handleLink()}>
+                            {auditLog.entityType} [{auditLog.entityId}]
+                        </Link>
+                    </div>
+
                     {auditLog.metadata.keys && (
-                        <div>
-                            <p className='text-gray-400 mb-1 font-mono'>Metadata</p>
-                            <div className='bg-gray-200 p-2.5'>
-                                {auditLog.metadata.keys.map((key : string) => (
-                                    <p key={key} className='font-mono'>{key}</p>
+                        <div className="sm:col-span-2">
+                            <p className='mb-1 text-xs font-medium tracking-wide text-muted-foreground uppercase'>Updated Fields</p>
+                            <div className="flex flex-wrap gap-2">
+                                {auditLog.metadata.keys.map((key: string) => (
+                                    <span key={key} className="rounded-md border border-border bg-muted/50 px-2.5 py-1 text-sm text-foreground">
+                                        {key}
+                                    </span>
                                 ))}
                             </div>
                         </div>
-
                     )}
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 

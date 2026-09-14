@@ -1,35 +1,24 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import { ChevronsDownUp, ChevronUp, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronsDownUp, SlidersHorizontal, X } from 'lucide-react';
 import { Input } from '@/src/shared/components/ui/input';
-import { Checkbox } from 'radix-ui';
 import { Button } from '@/src/shared/components/ui/button';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/src/shared/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/src/shared/components/ui/select';
 import { useDiplomasFilter } from '../../diploma/hooks/hooks';
-
-interface IProps {
-    diplomas: {
-        id: string;
-        title: string
-    }[]
-}
+import { cn } from '@/src/shared/lib/utils';
 
 
 export function SearchFilters() {
     const searchParams = useSearchParams()
     const router = useRouter()
     const [isCollapsed, setIsCollapsed] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [selectedDiploma, setSelectedDiploma] = useState("");
+    const [searchQuery, setSearchQuery] = useState(() => searchParams.get("search") || "");
+    const [selectedDiploma, setSelectedDiploma] = useState(() => searchParams.get("diplomaId") || "");
 
     const { data: diplomas } = useDiplomasFilter()
-
-
-
-
 
     const handleApplyFilters = () => {
         const params = new URLSearchParams(searchParams.toString());
@@ -54,7 +43,6 @@ export function SearchFilters() {
         router.push(`?${params.toString()}`);
     };
 
-
     const handleClearFilters = () => {
         const params = new URLSearchParams(searchParams.toString());
 
@@ -68,74 +56,72 @@ export function SearchFilters() {
         router.push(`?${params.toString()}`);
     };
 
-    useEffect(() => {
-        setSearchQuery(searchParams.get("search") || "");
-        setSelectedDiploma(searchParams.get("diplomaId") || "");
-    }, []);
-
+    const hasActiveFilters = Boolean(searchQuery || selectedDiploma);
 
     return (
-        <div className="bg-white border border-gray-200  mb-4">
-            <div className="flex items-center justify-between px-4 py-3 bg-blue-600 text-white ">
+        <div className="rounded-lg border border-border bg-card">
+            <div className="flex items-center justify-between px-4 py-3">
                 <div className="flex items-center gap-2">
-                    <SlidersHorizontal className='size-5' />
-                    <span className="font-semibold text-base">Search & Filters</span>
+                    <SlidersHorizontal className='size-5 text-primary' />
+                    <span className="text-base font-semibold">Search & Filters</span>
                 </div>
                 <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="flex items-center gap-1 hover:opacity-80 transition-opacity"
+                    className="flex items-center gap-1 text-sm text-muted-foreground transition-opacity hover:opacity-80"
                 >
                     <ChevronsDownUp
                         size={14}
-                        className={`transform transition-transform ${isCollapsed ? 'rotate-180' : ''}`}
+                        className={cn("transition-transform", isCollapsed && "rotate-180")}
                     />
-                    <span className="text-xs">Hide</span>
+                    <span className="text-xs">{isCollapsed ? "Show" : "Hide"}</span>
                 </button>
             </div>
 
             {!isCollapsed && (
-                <div className="px-4 py-4 space-y-4 border-t">
+                <div className="space-y-4 border-t border-border px-4 py-4">
                     <Input
                         type="text"
                         placeholder="Search by title"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className=" border-gray-200 p-2.5 h-11.5"
+                        onKeyDown={(e) => e.key === "Enter" && handleApplyFilters()}
+                        className="h-11"
                     />
 
-                    <div className='flex items-center gap-4'>
-                        <Select value={selectedDiploma} onValueChange={setSelectedDiploma}>
-                            <SelectTrigger className="w-full flex-1">
-                                <SelectValue placeholder="Diploma" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    {diplomas?.map((diploma) => (
-                                        <SelectItem value={diploma.id}>{diploma.title}</SelectItem>
-                                    ))}
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                    </div>
+                    <Select value={selectedDiploma} onValueChange={setSelectedDiploma}>
+                        <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Diploma" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                {diplomas?.map((diploma) => (
+                                    <SelectItem key={diploma.id} value={diploma.id}>
+                                        {diploma.title}
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
 
-                    <div className="flex justify-end gap-2 pt-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={handleClearFilters}
-                            className='h-9 w-25 px-3 rounded-none border-none'
-                        >
-                            Clear
-                        </Button>
-                        <Button
-                            size="sm"
-                            onClick={handleApplyFilters}
-                            disabled={!searchQuery && !selectedDiploma}
-                            className=" bg-gray-200 hover:bg-gray-300 transition-colors text-gray-800 h-9 w-25 px-3 rounded-none"
-                        >
-                            Apply
-                        </Button>
-                    </div>
+                    {hasActiveFilters && (
+                        <div className="flex items-center justify-end gap-2 pt-1">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={handleClearFilters}
+                                className="text-muted-foreground"
+                            >
+                                <X className="size-4" />
+                                Clear
+                            </Button>
+                            <Button
+                                size="sm"
+                                onClick={handleApplyFilters}
+                            >
+                                Apply
+                            </Button>
+                        </div>
+                    )}
                 </div>
             )}
         </div>

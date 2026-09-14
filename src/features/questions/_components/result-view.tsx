@@ -1,11 +1,9 @@
 "use client";
 
-import { Card, CardContent } from "@/src/shared/components/ui/card";
+import { Card } from "@/src/shared/components/ui/card";
 import { Button, buttonVariants } from "@/src/shared/components/ui/button";
-import { Progress } from "@/src/shared/components/ui/progress";
-import { CheckCircle2, FolderSearch, Rotate3DIcon, RotateCcw, XCircle } from "lucide-react";
+import { CheckCircle2, FolderSearch, RotateCcw, XCircle, CheckCheck } from "lucide-react";
 import { IQuestionAnalytics, ISubmission } from "../types/questions";
-import { RadioGroup, RadioGroupItem } from "@/src/shared/components/ui/radio-group";
 import { Label } from "@/src/shared/components/ui/label";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/src/shared/components/ui/chart";
 import { Pie, PieChart } from "recharts";
@@ -23,11 +21,11 @@ const chartConfig = {
     },
     Correct: {
         label: "Correct",
-        color: "#22c55e", // green
+        color: "var(--success)",
     },
     Wrong: {
         label: "Wrong",
-        color: "#ef4444", // red
+        color: "var(--destructive)",
     },
 };
 
@@ -38,122 +36,111 @@ export default function ResultView({ submission, analytics }: Props) {
         {
             browser: "Correct",
             visitors: submission?.correctAnswers || 0,
-            fill: "#00BC7D",
+            fill: "var(--success)",
         },
         {
             browser: "Wrong",
             visitors: submission?.wrongAnswers || 0,
-            fill: "#EF4444",
+            fill: "var(--destructive)",
         },
     ];
 
-    console.log(analytics)
-
-
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-[275px_1fr] gap-4 bg-white">
+        <div className="space-y-4">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-[300px_1fr]">
 
-            {/* 🟢 Left Side (Score) */}
-            <Card className="p-6 flex flex-col items-center justify-center gap-2 h-84  lg:h-128.5 bg-blue-50 border border-blue-200">
-                <ChartContainer
-                    config={chartConfig}
-                    className="mx-auto aspect-square max-h-[203px] h-full"
-                >
-                    <PieChart>
-                        <ChartTooltip
-                            cursor={false}
-                            content={<ChartTooltipContent hideLabel />}
-                        />
+                {/* Score summary */}
+                <Card className="flex flex-col items-center justify-center gap-2 border-border bg-muted/30 p-6">
+                    <ChartContainer
+                        config={chartConfig}
+                        className="mx-auto aspect-square h-full max-h-[203px]"
+                    >
+                        <PieChart>
+                            <ChartTooltip
+                                cursor={false}
+                                content={<ChartTooltipContent hideLabel />}
+                            />
 
-                        <Pie
-                            data={chartData}
-                            dataKey="visitors"
-                            nameKey="browser"
-                            innerRadius={60}
-                            outerRadius={100}
-                        />
-                    </PieChart>
+                            <Pie
+                                data={chartData}
+                                dataKey="visitors"
+                                nameKey="browser"
+                                innerRadius={60}
+                                outerRadius={100}
+                            />
+                        </PieChart>
+                    </ChartContainer>
 
-                </ChartContainer>
-                <div className="mt-6 space-y-4">
-                    <div className="flex items-center gap-2.5">
-                        <span className="w-4 h-4 bg-emerald-500"></span>
-                        <span className="text-sm font-mono font-medium">Correct: 20</span>
+                    <div className="mt-6 space-y-4">
+                        <div className="flex items-center gap-2.5">
+                            <span className="size-4 rounded-full bg-success"></span>
+                            <span className="text-sm font-medium text-foreground">
+                                Correct: {submission?.correctAnswers || 0}
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-2.5">
+                            <span className="size-4 rounded-full bg-destructive"></span>
+                            <span className="text-sm font-medium text-foreground">
+                                Wrong: {submission?.wrongAnswers || 0}
+                            </span>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-2.5">
-                        <span className="w-4 h-4 bg-red-500"></span>
-                        <span className="text-sm font-mono font-medium">Correct: 20</span>
-                    </div>
-                </div>
+                </Card>
 
+                {/* Question-by-question breakdown */}
+                <div className="max-h-[400px] space-y-4 overflow-y-auto rounded-lg border border-border bg-card p-4 lg:max-h-[300px]">
+                    {analytics.map((q) => (
+                        <div key={q.questionId} className="space-y-3 border-b border-border pb-4 last:border-none last:pb-0">
+                            <h3 className="flex items-start gap-2 text-base font-semibold text-foreground">
+                                {q.isCorrect ? (
+                                    <CheckCircle2 className="mt-1 size-5 shrink-0 text-success" />
+                                ) : (
+                                    <XCircle className="mt-1 size-5 shrink-0 text-destructive" />
+                                )}
+                                {q.questionText}
+                            </h3>
 
-            </Card>
+                            <div className="space-y-2 pl-7">
+                                <div
+                                    className={cn(
+                                        "flex items-center justify-between gap-2.5 rounded-md border px-3 py-2",
+                                        q.isCorrect
+                                            ? "border-success/30 bg-success/5"
+                                            : "border-destructive/30 bg-destructive/5"
+                                    )}
+                                >
+                                    <Label className="text-sm text-foreground">
+                                        {q.selectedAnswer.text}
+                                    </Label>
+                                    {!q.isCorrect && (
+                                        <CheckCheck className="size-4 shrink-0 text-success" />
+                                    )}
+                                </div>
 
-            {/* 🔵 Right Side (Questions) */}
-            <div className="">
-                <div className="md:h-128.5 lg:overflow-y-scroll">
-                    {analytics.map((q,) => (
-                        <Card key={q.questionId} className="p-2.5 border-none" style={{ boxShadow: "none" }}>
-                            <CardContent className="space-y-2.5 p-0 border-none">
-
-                                {/* Question */}
-                                <h3 className="text-blue-600 font-semibold font-mono text-xl">
-                                    {q.questionText}
-                                </h3>
-
-                                {/* Selected Answer */}
-
-                                <RadioGroup value={q.selectedAnswer.id} className="pointer-events-none">
-
-                                    {/* Selected Answer */}
-                                    <div
-                                        className={`p-4 flex items-center gap-2.5 ${q.isCorrect ? "bg-green-50" : "bg-red-50"
-                                            }`}
-                                    >
-                                        <RadioGroupItem
-                                            value={q.selectedAnswer.id}
-                                            id={q.selectedAnswer.id}
-                                            className={q.isCorrect ? `data-checked:border-emerald-600` : "data-checked:border-red-600"}
-                                            indicatorClassName={q.isCorrect ? "emerald" : "red"}
-                                        />
-                                        <Label htmlFor={q.selectedAnswer.id} className="text-sm font-mono">
-                                            {q.selectedAnswer.text}
+                                {!q.isCorrect && (
+                                    <div className="flex items-center gap-2">
+                                        <div className="size-1.5 rounded-full bg-success" />
+                                        <Label className="text-sm font-medium text-success">
+                                            {q.correctAnswer.text}
                                         </Label>
                                     </div>
-
-                                    {/* Correct Answer (لو غلط) */}
-                                    {!q.isCorrect && (
-                                        <div className="p-4 bg-green-50 border border-green-200 flex items-center gap-2.5">
-                                            <RadioGroupItem
-                                                value={q.correctAnswer.id}
-                                                id={q.correctAnswer.id}
-                                                indicatorClassName={"emerald"}
-                                                className="border-emerald-600"
-
-                                            />
-                                            <Label htmlFor={q.correctAnswer.id} className="text-sm font-mono">
-                                                {q.correctAnswer.text}
-                                            </Label>
-                                        </div>
-                                    )}
-                                </RadioGroup>
-
-                            </CardContent>
-                        </Card>
+                                )}
+                            </div>
+                        </div>
                     ))}
                 </div>
+            </div>
 
-                {/* Buttons */}
-                <div className="flex gap-4 pt-6">
-                    <Button variant="secondary" className="flex-1 bg-gray-200 p-4" onClick={() => router.refresh()}>
-                        <RotateCcw className="text-lg" />
-                        <span>Restart</span>
-                    </Button>
-                    <Link href={"/"} className={cn(buttonVariants() , "flex-1 bg-blue-600 p-4")} >
-                        <FolderSearch className="text-lg" />
-                        <span>Explore</span>
-                    </Link>
-                </div>
+            {/* Actions */}
+            <div className="flex gap-4">
+                <Button variant="secondary" className="flex-1" onClick={() => router.refresh()}>
+                    <RotateCcw />
+                    <span>Restart</span>
+                </Button>
+                <Link href={"/"} className={cn(buttonVariants(), "flex-1")}>
+                    <FolderSearch />
+                    <span>Explore</span>
+                </Link>
             </div>
         </div>
     );

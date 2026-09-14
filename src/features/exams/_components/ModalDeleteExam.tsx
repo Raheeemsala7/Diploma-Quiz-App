@@ -1,9 +1,9 @@
 "use client"
 import { Button } from '@/src/shared/components/ui/button'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/shared/components/ui/dialog'
-import { Loader2Icon, Trash2, TriangleAlertIcon } from 'lucide-react'
+import { Loader2Icon, TriangleAlertIcon, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
-import {  useDeleteExam } from '../hooks/hooks'
+import { useDeleteExam } from '../hooks/hooks'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -13,48 +13,59 @@ const ModelDeleteExam = ({ id }: { id: string }) => {
     const [isOpen, setIsOpen] = useState(false)
     const router = useRouter()
 
-
     const handelRemoveAccount = () => {
         mutate(id, {
             onSuccess: (data) => {
-                toast.success(data.message || "Diploma deleted successfully")
+                toast.success(data.message || "Exam deleted successfully")
                 setIsOpen(false)
                 router.push(`/`)
             },
             onError: (error) => {
-                toast.error(error.message || "Failed to delete Diploma")
+                toast.error(error.message || "Failed to delete Exam")
             }
         })
     }
+
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button className='font-mono p-4 gap-2.5' variant={"destructive"}>
+                <Button variant={"destructive"} className="gap-2.5">
                     <Trash2 />
                     Delete
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-xl flex justify-center items-center flex-col">
 
-                <div className="size-27.5 bg-red-50 rounded-full flex justify-center items-center">
-                    <div className="size-20 bg-red-100 rounded-full flex justify-center items-center" >
-                        <TriangleAlertIcon className='size-12.5 text-red-600' />
+            <DialogContent className="sm:max-w-xl">
+                <DialogHeader className="items-center text-center">
+                    <div className="mb-2 grid size-16 place-items-center rounded-2xl bg-destructive/10">
+                        <TriangleAlertIcon className="size-8 text-destructive" />
                     </div>
-                </div>
+                    <DialogTitle>Delete exam?</DialogTitle>
+                    <DialogDescription className="text-center">
+                        Are you sure you want to delete this exam? Any questions
+                        attached to it will also be removed. This action is
+                        permanent and cannot be undone.
+                    </DialogDescription>
+                </DialogHeader>
 
-                <h6 className='text-red-600 text-lg font-mono font-medium'>Are you sure you want to delete your Exam?</h6>
-                <p className='text-gray-500 text-sm font-mono'>This action is permanent and cannot be undone.</p>
-
-
-                <DialogFooter className='w-full flex !justify-center items-center'>
-                    <DialogClose className='flex-1' asChild>
-                        <Button className='bg-gray-200  font-mono !px-4 !py-2.5 !h-auto' variant="outline">Cancel</Button>
+                <DialogFooter className="flex !justify-center gap-3">
+                    <DialogClose asChild>
+                        <Button className="flex-1" variant="outline">
+                            Cancel
+                        </Button>
                     </DialogClose>
-                    <Button onClick={handelRemoveAccount} disabled={isPending} className='flex-1 font-mono !px-4 !py-2.5 !h-auto bg-red-600' type="submit">
-                        {isPending ? <>
-                            <Loader2Icon className=' animate-spin' />
-                            Yes, delete
-                        </> : "Yes, delete"}
+                    <Button
+                        onClick={handelRemoveAccount}
+                        disabled={isPending}
+                        className="flex-1 bg-destructive text-white hover:bg-destructive/90"
+                        type="submit"
+                    >
+                        {isPending ? (
+                            <>
+                                <Loader2Icon className="animate-spin" />
+                                Deleting...
+                            </>
+                        ) : "Yes, delete"}
                     </Button>
                 </DialogFooter>
             </DialogContent>

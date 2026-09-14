@@ -69,11 +69,11 @@ export function SearchFilters() {
 
 
     return (
-        <div className="bg-white border border-gray-200  mb-4">
-            <div className="flex items-center justify-between px-4 py-3 bg-blue-600 text-white ">
+        <div className="rounded-lg border border-border bg-card mb-4">
+            <div className="flex items-center justify-between border-b border-border px-4 py-3">
                 <div className="flex items-center gap-2">
-                    <SlidersHorizontal className='size-5' />
-                    <span className="font-semibold text-base">Search & Filters</span>
+                    <SlidersHorizontal className='size-5 text-muted-foreground' />
+                    <span className="font-semibold text-base text-foreground">Search & Filters</span>
                 </div>
                 <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
@@ -119,7 +119,7 @@ export function SearchFilters() {
                     </div>
 
                     <div>
-                        <label className="block text-sm text-gray-700 mb-3">Immutability</label>
+                        <label className="block text-sm text-muted-foreground mb-3">Immutability</label>
                         {/* <div className="flex items-center gap-2">
                             <Checkbox
                                 id="immutability"
@@ -137,7 +137,7 @@ export function SearchFilters() {
                             variant="outline"
                             size="sm"
                             onClick={handleClearFilters}
-                            className='h-9 w-25 px-3 rounded-none border-none'
+                            className='h-9 w-25 px-3'
                         >
                             Clear
                         </Button>
@@ -145,7 +145,7 @@ export function SearchFilters() {
                             size="sm"
                             onClick={handleApplyFilters}
                             disabled={!selectedCategory && !selectedAction}
-                            className=" bg-gray-200 hover:bg-gray-300 transition-colors text-gray-800 h-9 w-25 px-3 rounded-none"
+                            className="h-9 w-25 px-3"
                         >
                             Apply
                         </Button>

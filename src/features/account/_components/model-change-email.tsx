@@ -45,8 +45,6 @@ const ModelChangeEmail = () => {
             onSuccess() {
                 toast.success("Verification email sent successfully.")
                 setStep(2)
-                console.log(step)
-                console.log("setStep(2)")
             },
             onError: (error: any) => {
                 toast.error(error.message || "Failed to delete account")
@@ -74,7 +72,7 @@ const ModelChangeEmail = () => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <div className='text-blue-600 cursor-pointer flex gap-1 items-center' onClick={() => setOpen(true)}>
+                <div className='text-primary cursor-pointer flex gap-1 items-center' onClick={() => setOpen(true)}>
                     <PencilLine className='size-4' />
                     <span className='text-sm'>change</span>
                 </div>
@@ -89,18 +87,18 @@ const ModelChangeEmail = () => {
                                     <StepperIndicator
                                         className={`group !bg-transparent
                                                         transition-all duration-200 size-6
-                                                        data-[state=active]:!bg-blue-100 data-[state=active]:shadow-[0px_0px_3px_6px_#DBEAFE]
+                                                        data-[state=active]:bg-primary/10 data-[state=active]:ring-2 data-[state=active]:ring-primary/20
                                                     `}
                                     >
                                         <div>
-                                            <Icon className="bg-transparent group-data-[state=completed]:!stroke-blue-600 group-data-[state=active]:!stroke-blue-600 group-data-[state=completed]:!fill-blue-600 group-data-[state=active]:!fill-blue-600 group-data-[state=inactive]:!stroke-blue-600" size={25} />
+                                            <Icon className="bg-transparent group-data-[state=completed]:stroke-primary group-data-[state=active]:stroke-primary group-data-[state=completed]:fill-primary group-data-[state=active]:fill-primary group-data-[state=inactive]:stroke-primary" size={25} />
                                         </div>
                                     </StepperIndicator>
                                 </StepperTrigger>
 
                                 {/* Line */}
                                 {s !== steps.length && (
-                                    <StepperSeparator className="border-b-2 border-dashed border-blue-600 group-data-[state=completed]/step:border-solid" />
+                                    <StepperSeparator className="border-b-2 border-dashed border-primary group-data-[state=completed]/step:border-solid" />
                                 )}
                             </StepperItem>
                         ))}
@@ -112,7 +110,7 @@ const ModelChangeEmail = () => {
                 {step === 1 ?
                     <div className='text-start w-full space-y-4'>
                         <h6 className='text-3xl font-bold'>Change Email</h6>
-                        <p className='text-blue-600 text-2xl font-bold'>Enter your new email</p>
+                        <p className='text-primary text-2xl font-bold'>Enter your new email</p>
 
                         <form onSubmit={formRequest.handleSubmit(onSubmitRequest)}>
                             <Controller
@@ -120,11 +118,11 @@ const ModelChangeEmail = () => {
                                 control={formRequest.control}
                                 render={({ field, fieldState }) => (
                                     <Field>
-                                        <FieldLabel className="font-mono ">
+                                        <FieldLabel>
                                             Email
                                         </FieldLabel>
                                         <Input
-                                            className=" px-4 py-6 border border-[#E5E7EB] rounded-0 font-mono"
+                                            className="px-4 py-6 border-border"
                                             type="email"
                                             placeholder="user@example.com"
 
@@ -132,7 +130,6 @@ const ModelChangeEmail = () => {
                                         />
                                         {fieldState.invalid && (
                                             <FieldError
-                                                className="text-red-500"
                                                 errors={[fieldState.error]}
                                             />
                                         )}
@@ -142,7 +139,7 @@ const ModelChangeEmail = () => {
 
                             <DialogFooter className='w-full flex !justify-center items-center pt-6'>
 
-                                <Button disabled={isPendingReq} className='flex-1 font-mono !px-4 !py-2.5 !h-auto bg-blue-600' type="submit">
+                                <Button disabled={isPendingReq} className='flex-1' type="submit">
                                     {isPendingReq ? <>
                                         <Loader2Icon className=' animate-spin' />
                                         Next
@@ -155,11 +152,11 @@ const ModelChangeEmail = () => {
 
                     <div className='text-start w-full space-y-4'>
                         <h6 className='text-3xl font-bold'>Change Email</h6>
-                        <p className='text-blue-600 text-2xl font-bold'>Verify OTP</p>
+                        <p className='text-primary text-2xl font-bold'>Verify OTP</p>
 
                         <p>Please enter the 6-digits code we have sent to:</p>
                         <div >
-                            user@example.com <span onClick={() => setStep(1)} className="text-blue-600 cursor-pointer underline"> Edit</span>
+                            user@example.com <span onClick={() => setStep(1)} className="text-primary cursor-pointer underline"> Edit</span>
                         </div>
 
                         <div className="flex justify-center mt-5">
@@ -182,7 +179,7 @@ const ModelChangeEmail = () => {
 
                         <DialogFooter className='w-full flex !justify-center items-center pt-6'>
 
-                            <Button onClick={() => handelVerifyCode({ code })} disabled={isPendingConfirm} className='flex-1 font-mono !px-4 !py-2.5 !h-auto bg-blue-600' type="submit">
+                            <Button onClick={() => handelVerifyCode({ code })} disabled={isPendingConfirm} className='flex-1' type="submit">
                                 {isPendingConfirm ? <>
                                     <Loader2Icon className=' animate-spin' />
                                     Verify...

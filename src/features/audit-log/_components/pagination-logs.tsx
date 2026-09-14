@@ -31,26 +31,26 @@ export function PaginationLogs({ currentPage, totalItems, totalPages, limit }: I
     };
 
     return (
-        <div className="flex justify-between px-4 py-3 bg-white border border-gray-200">
+        <div className="flex justify-between px-4 py-3 rounded-lg border border-border bg-card">
             <div className="flex items-center justify-start gap-4 ">
-                <div className="text-sm text-gray-800 font-mono">
-                    <span className="font-semibold text-gray-800">{startItem}</span> - <span className="font-semibold text-gray-800">{endItem}</span> of {' '}
-                    <span className="font-semibold text-gray-800">{totalItems}</span>
+                <div className="text-sm text-foreground">
+                    <span className="font-semibold text-foreground">{startItem}</span> - <span className="font-semibold text-foreground">{endItem}</span> of {' '}
+                    <span className="font-semibold text-foreground">{totalItems}</span>
                 </div>
 
 
 
-                <div className="flex gap-3 items-center border border-gray-200">
+                <div className="flex gap-3 items-center border border-border">
                     <Button
                         variant="outline"
                         size="sm"
                         onClick={() => onPageChange(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="px-2 bg-gray-200 rounded-none size-10"
+                        className="size-9 px-0"
                     >
                         <ChevronLeft size={18} />
                     </Button>
-                    <div className="text-sm text-gray-400 ">
+                    <div className="text-sm text-muted-foreground">
                         Page <span>{currentPage}</span> of{' '}
                         <span>{totalPages}</span>
                     </div>
@@ -59,14 +59,14 @@ export function PaginationLogs({ currentPage, totalItems, totalPages, limit }: I
                         size="sm"
                         onClick={() => onPageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="px-2 bg-gray-200 rounded-none size-10"
+                        className="size-9 px-0"
                     >
                         <ChevronRight size={18} />
                     </Button>
                 </div>
             </div>
 
-            <Link href={"/create-new-diploma"} className={cn(buttonVariants(), "bg-emerald-500")} >
+            <Link href={"/create-new-diploma"} className={cn(buttonVariants())} >
                 <PlusIcon className='size-4' />
                 Create New Diploma
             </Link>

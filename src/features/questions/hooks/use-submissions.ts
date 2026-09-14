@@ -19,12 +19,7 @@ export const useSubmissions = () => {
                 body: JSON.stringify(data)
             })
 
-
             const result = await response.json();
-
-            console.log("STATUS:", response.status);
-            console.log("OK:", response.ok);
-            console.log("DATA:", result);
 
             if (!response.ok) {
                 const error: IErrorResponse = {

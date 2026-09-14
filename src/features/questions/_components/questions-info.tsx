@@ -5,16 +5,15 @@ import { Label } from '@/src/shared/components/ui/label'
 import { cn } from '@/src/shared/lib/utils'
 import { CheckCheck, CheckIcon, CopyPlus, Loader2, Plus, SaveIcon, Trash2, X } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Answer, ExamQuestion, IQueItem } from '../types/questions'
 import { ExamsCombobox } from './ExamsCombobox'
-import { useCreateMultiBulkQuestion, useCreateSingleQuestion, useGetQuestions, useUpdateSingleQuestion } from '../hooks/use-question'
+import { useCreateMultiBulkQuestion, useCreateSingleQuestion, useUpdateSingleQuestion } from '../hooks/use-question'
 import { toast } from 'sonner'
 import QuestionBulkMode from './questionBulkMode'
 
 
 const QuestionsInfo = ({ id, diplomaId }: { id: string, diplomaId: string }) => {
-
     const [bulkMode, setBulkMode] = useState(false)
     const [singleQuestion, setSingleQuestion] = useState<ExamQuestion>({
         id: "",
@@ -34,9 +33,6 @@ const QuestionsInfo = ({ id, diplomaId }: { id: string, diplomaId: string }) => 
     const [multiQuestion, setMultiQuestion] = useState<IQueItem[]>([])
     const [originalQuestions, setOriginalQuestions] =
         useState<IQueItem[]>([])
-
-    console.log("RENDER FORM COM QUESTION INFO")
-
 
 
     const handleAddAnswer = () => {
@@ -150,10 +146,8 @@ const handleMarkCorrect = (answerId: string) => {
                             isCorrect: a.isCorrect,
                         })),
                     },
-                    id,
+                    examId: id,
                 })
-
-                console.log("createSingleQuestion .")
 
                 toast.success("Question created successfully")
             } 
@@ -169,8 +163,6 @@ const handleMarkCorrect = (answerId: string) => {
                         })),
                     },
                 })
-
-                console.log("updateSingleQuestion")
 
                 toast.success("Question updated successfully")
             }
@@ -238,7 +230,7 @@ const handleMarkCorrect = (answerId: string) => {
                             ),
                     },
 
-                    id,
+                    examId: id,
                 })
                 toast.success(
                     "Question created successfully"
@@ -266,15 +258,12 @@ const handleMarkCorrect = (answerId: string) => {
                     id
                 })
 
-                console.log(newQuestions)
-
                 toast.success(
                     "Bulk questions created"
                 )
             }
 
             // UPDATE QUESTIONS
-            console.log("UPDATE QUESTIONS" , updatedQuestions)
             if (updatedQuestions.length > 0) {
 
                 await Promise.all(
@@ -293,11 +282,6 @@ const handleMarkCorrect = (answerId: string) => {
                                     })),
                                 }
                             })
-
-                            console.log(
-                                "UPDATED",
-                                question
-                            )
                         }
                     )
                 )
@@ -307,10 +291,7 @@ const handleMarkCorrect = (answerId: string) => {
                 )
             }
 
-        } catch (error) {
-
-            console.log(error)
-
+        } catch {
             toast.error(
                 "Something went wrong"
             )
@@ -321,28 +302,32 @@ const handleMarkCorrect = (answerId: string) => {
     }
 
 
-
-
     return (
-        <>
-            <div className='flex justify-between items-center bg-white'>
+        <div className="space-y-6">
+            <div className='flex flex-col gap-4 rounded-lg border border-border bg-card p-4 md:flex-row md:items-center md:justify-between'>
                 <Button
                     onClick={() => setBulkMode(!bulkMode)}
-                    className='px-4 py-2 flex gap-2.5 text-white bg-blue-600 text-sm font-mono h-auto'>
+                    variant={bulkMode ? "default" : "outline"}
+                    className="w-fit gap-2.5"
+                >
                     <CopyPlus size={18} />
-                    Bulk Add Mode
+                    {bulkMode ? "Exit Bulk Mode" : "Bulk Add Mode"}
                 </Button>
-                <div className="flex gap-2.5">
-                    <Link href={"/"} className={cn(buttonVariants(), "bg-gray-200 text-black text-sm font-mono")} >
+
+                <div className="flex gap-3">
+                    <Link href={"/"} className={cn(buttonVariants({ variant: "outline" }))}>
                         <X />
                         Cancel
                     </Link>
 
-                    <Button disabled={isSinglePending} onClick={handleSaveQuestions} type='submit' className='bg-emerald-500 text-white text-sm font-mono'>
-                        {isSinglePending ? <>
+                    <Button
+                        disabled={isSinglePending || isUpdateQuestionPending || isBulkQuestionPending}
+                        onClick={handleSaveQuestions}
+                        type='submit'
+                    >
+                        {isSinglePending || isUpdateQuestionPending || isBulkQuestionPending ? <>
                             <Loader2 className='size-4 animate-spin' />
-                            <SaveIcon />
-                            Save
+                            Saving...
                         </> : <>
                             <SaveIcon />
                             Save
@@ -350,141 +335,146 @@ const handleMarkCorrect = (answerId: string) => {
                     </Button>
                 </div>
             </div>
-            <div className='p-6'>
-                <div className=''>
-                    <div className="bg-blue-600 text-white px-4">
-                        Exam Info
+
+            <div className="rounded-lg border border-border bg-card">
+                <div className="border-b border-border px-5 py-4">
+                    <p className="font-medium">Exam Info</p>
+                    <p className="text-sm text-muted-foreground">
+                        Choose the exam this question belongs to.
+                    </p>
+                </div>
+                <div className='space-y-4 p-5'>
+                    <div className='space-y-2'>
+                        <Label>Exam</Label>
+                        <ExamsCombobox selectedId={selectExamId} diplomaId={diplomaId} onChange={setSelectExamId} />
                     </div>
-                    <div className='p-4 bg-white space-y-4'>
+                    {!bulkMode && (
                         <div className='space-y-2'>
-                            <Label >Exams</Label>
-                            <ExamsCombobox selectedId={selectExamId} diplomaId={diplomaId} onChange={setSelectExamId} />
+                            <Label>Question Headline</Label>
+                            <Input
+                                value={singleQuestion.text}
+                                onChange={(e) => setSingleQuestion({ ...singleQuestion, text: e.target.value })}
+                                placeholder="Write the question here"
+                            />
                         </div>
-                        {!bulkMode && (
-                            <div className='space-y-2'>
-                                <Label >Question Headline</Label>
-                                <Input value={singleQuestion.text} onChange={(e) => setSingleQuestion({ ...singleQuestion, text: e.target.value })} />
-                            </div>
-                        )}
+                    )}
+                </div>
+            </div>
+
+            <div className="rounded-lg border border-border bg-card">
+                <div className="flex items-center justify-between border-b border-border px-5 py-4">
+                    <div>
+                        <p className="font-medium">Answers</p>
+                        <p className="text-sm text-muted-foreground">
+                            Add up to 4 answers and mark the correct one.
+                        </p>
                     </div>
+                    <Button
+                        onClick={() => setShowNewAnswerInput(true)}
+                        size="sm"
+                        disabled={!canAddMore}
+                        className="gap-1"
+                    >
+                        <Plus size={16} /> Add Answer
+                    </Button>
                 </div>
 
-                <div>
-                    <div className="bg-blue-600 text-white px-4">
-                        Questions
-                    </div>
-                    {bulkMode && <QuestionBulkMode id={id} multiQuestion={multiQuestion} setMultiQuestion={setMultiQuestion} singleQuestion={singleQuestion} setSingleQuestion={setSingleQuestion} setOriginalQuestions={setOriginalQuestions} />}
+                <div className="p-5">
+                    {bulkMode && (
+                        <QuestionBulkMode id={id} multiQuestion={multiQuestion} setMultiQuestion={setMultiQuestion} singleQuestion={singleQuestion} setSingleQuestion={setSingleQuestion} setOriginalQuestions={setOriginalQuestions} />
+                    )}
 
-                    <div className='flex '>
-                        <div className='flex-1'>
-                            {/* Answers Section */}
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between bg-gray-200">
-                                    <div className='flex items-center'>
-                                        <span className='w-10 h-10 block'></span>
-                                        <label className="text-sm font-medium text-gray-700">
-                                            Body
-                                        </label>
-                                    </div>
-                                    <Button
-                                        onClick={() => setShowNewAnswerInput(true)}
-                                        className="bg-green-500 hover:bg-green-600 rounded-none h-10 text-white gap-1"
-                                        disabled={!canAddMore}
+                    {!bulkMode && (
+                        <div className="space-y-4">
+                            <div className="divide-y divide-border rounded-lg border border-border">
+                                {singleQuestion.answers.map((answer) => (
+                                    <div
+                                        key={answer.id}
+                                        className="flex items-center justify-between gap-4 px-4 py-3"
                                     >
-                                        <Plus size={16} /> Add Answer
-                                    </Button>
-                                </div>
-
-                                {/* Existing Answers */}
-                                <div>
-                                    <div className="space-y-0 bg-white">
-                                        {singleQuestion.answers.map((answer) => (
-                                            <div
-                                                key={answer.id}
-                                                className="flex items-center justify-between"
-                                            >
-                                                <div className="flex items-center gap-3 flex-1">
-                                                    <Button size={"icon-lg"} variant={"destructive"}
-                                                        onClick={() => handleRemoveAnswer(answer.id || "")}
-                                                        className='w-12.5 h-12.5'>
-                                                        <Trash2 size={19} />
-                                                    </Button>
-
-
-                                                    <span className="text-gray-800 px-4 py-2.5">{answer.text}</span>
-                                                </div>
-
-                                                <div className="px-4 py-2.5">
-                                                    {answer.isCorrect && (
-                                                        <span className="text-xs cursor-pointer font-medium text-green-600  p-2.5 py-1.5 flex gap-1.5"
-                                                        >
-                                                            <CheckCheck size={14} /> Correct Answer
-                                                        </span>
-                                                    )}
-                                                    {!answer.isCorrect && (
-                                                        <span className="text-xs cursor-pointer text-black bg-gray-200 p-2.5 py-1.5 flex gap-1.5"
-                                                            onClick={() => handleMarkCorrect(answer.id || "")}
-                                                        >
-                                                            <CheckIcon size={14} />
-                                                            Mark Correct
-                                                        </span>
-                                                    )}
-
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    {/* New Answer Input Row */}
-                                    {showNewAnswerInput && (
-                                        <div className="flex items-center gap-3 bg-green-50 p-4">
-                                            <button
-                                                onClick={() => {
-                                                    setShowNewAnswerInput(false)
-                                                    setNewAnswerText('')
-                                                }}
-                                                className="text-gray-400 hover:text-gray-600 border border-gray-300 flex justify-center items-center rounded-full flex-shrink-0 w-7.5 h-7.5"
-                                            >
-                                                <X size={20} />
-                                            </button>
-                                            <Input
-                                                placeholder="Enter answer body"
-                                                value={newAnswerText}
-                                                onChange={(e) => setNewAnswerText(e.target.value)}
-                                                onKeyPress={(e) => {
-                                                    if (e.key === 'Enter') {
-                                                        handleAddAnswer()
-                                                    }
-                                                }}
-                                                className="flex-1 border-green-300"
-                                                autoFocus
-                                            />
+                                        <div className="flex items-center gap-3">
                                             <Button
-                                                onClick={handleAddAnswer}
-                                                disabled={newAnswerText.trim() === ''}
-                                                className="bg-green-500 hover:bg-green-600 text-white flex-shrink-0"
+                                                size={"icon"}
+                                                variant={"ghost"}
+                                                onClick={() => handleRemoveAnswer(answer.id || "")}
+                                                aria-label="Remove answer"
+                                                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                                             >
-                                                + Add
+                                                <Trash2 size={19} />
                                             </Button>
+
+                                            <span className="text-sm text-foreground">{answer.text}</span>
                                         </div>
-                                    )}
-                                </div>
 
+                                        <div>
+                                            {answer.isCorrect ? (
+                                                <span className="inline-flex items-center gap-1.5 rounded-md bg-success/10 px-2.5 py-1 text-xs font-medium text-success">
+                                                    <CheckCheck size={14} /> Correct Answer
+                                                </span>
+                                            ) : (
+                                                <button
+                                                    onClick={() => handleMarkCorrect(answer.id || "")}
+                                                    className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                                                >
+                                                    <CheckIcon size={14} />
+                                                    Mark Correct
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
 
-
-                                {/* Add Answer Button - Disabled when 4 answers reached */}
-                                {!showNewAnswerInput && !canAddMore && (
-                                    <div className="text-sm text-gray-500 text-center py-2">
-                                        Maximum of 4 answers reached
+                                {singleQuestion.answers.length === 0 && (
+                                    <div className="px-4 py-8 text-center text-sm text-muted-foreground">
+                                        No answers yet. Click &quot;Add Answer&quot; to create one.
                                     </div>
                                 )}
                             </div>
 
+                            {showNewAnswerInput && (
+                                <div className="flex items-center gap-3 rounded-lg border border-border bg-success/5 p-4">
+                                    <button
+                                        onClick={() => {
+                                            setShowNewAnswerInput(false)
+                                            setNewAnswerText('')
+                                        }}
+                                        className="grid size-7 shrink-0 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:text-foreground"
+                                        aria-label="Cancel adding answer"
+                                    >
+                                        <X size={20} />
+                                    </button>
+                                    <Input
+                                        placeholder="Enter answer body"
+                                        value={newAnswerText}
+                                        onChange={(e) => setNewAnswerText(e.target.value)}
+                                        onKeyPress={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handleAddAnswer()
+                                            }
+                                        }}
+                                        className="flex-1"
+                                        autoFocus
+                                    />
+                                    <Button
+                                        onClick={handleAddAnswer}
+                                        disabled={newAnswerText.trim() === ''}
+                                        className="shrink-0"
+                                    >
+                                        + Add
+                                    </Button>
+                                </div>
+                            )}
+
+                            {!showNewAnswerInput && !canAddMore && (
+                                <p className="text-center text-sm text-muted-foreground">
+                                    Maximum of 4 answers reached
+                                </p>
+                            )}
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 

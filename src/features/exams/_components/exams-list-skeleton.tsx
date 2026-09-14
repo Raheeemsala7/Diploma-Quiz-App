@@ -1,35 +1,29 @@
-import { Skeleton } from '@/src/shared/components/ui/skeleton'
+import { Skeleton } from "@/src/shared/components/ui/skeleton"
 
 const ExamsListSkeleton = () => {
-    return (
-        <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="relative bg-[#EFF6FF] border border-gray-200 shadow-sm p-4 w-full flex items-center gap-4">
+  return (
+    <div className="space-y-4">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div
+          key={i}
+          className="relative flex w-full items-center gap-5 rounded-lg border border-border bg-card p-4"
+        >
+          <div className="flex size-24 shrink-0 items-center justify-center rounded-lg bg-muted">
+            <Skeleton className="size-19 bg-muted" />
+          </div>
 
-                    {/* Image */}
-                    <div className="flex justify-center items-center size-25 bg-[#DBEAFE] border border-[#8EC5FF]">
-                        <Skeleton className="h-19 w-19 bg-gray-400/70" />
-                    </div>
-
-                    {/* Content */}
-                    <div className="flex-1 space-y-2">
-                        <div className="flex items-start justify-between">
-                            <Skeleton className="h-6 w-1/2 bg-gray-400/70" />
-                            <Skeleton className="h-4 w-24 bg-gray-300" />
-                        </div>
-
-                        <Skeleton className="h-4 w-full bg-gray-300" />
-                        <Skeleton className="h-4 w-5/6 bg-gray-300" />
-                    </div>
-
-                    {/* Button Skeleton */}
-                    <div className="absolute bottom-4 right-2">
-                        <Skeleton className="h-8 w-20 bg-gray-400/70" />
-                    </div>
-                </div>
-            ))}
+          <div className="flex-1 space-y-2">
+            <div className="flex items-start justify-between gap-4">
+              <Skeleton className="h-5 w-1/2 bg-muted" />
+              <Skeleton className="h-4 w-24 bg-muted" />
+            </div>
+            <Skeleton className="h-4 w-full bg-muted" />
+            <Skeleton className="h-4 w-5/6 bg-muted" />
+          </div>
         </div>
-    )
+      ))}
+    </div>
+  )
 }
 
 export default ExamsListSkeleton

@@ -31,40 +31,42 @@ export function PaginationExams({ currentPage, totalItems, totalPages, limit }: 
     };
 
     return (
-        <div className="flex items-center justify-between px-4 py-3 bg-white border border-gray-200">
-            <div className='flex items-center gap-4'>
-                <div className="text-sm text-gray-800 font-mono">
-                    <span className="font-semibold text-gray-800">{startItem}</span> - <span className="font-semibold text-gray-800">{endItem}</span> of {' '}
-                    <span className="font-semibold text-gray-800">{totalItems}</span>
+        <div className="flex flex-col gap-4 rounded-lg border border-border bg-card px-4 py-3 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-wrap items-center gap-4">
+                <div className="text-sm tabular-nums text-muted-foreground">
+                    Showing{" "}
+                    <span className="font-semibold text-foreground">{startItem}</span> -{" "}
+                    <span className="font-semibold text-foreground">{endItem}</span> of{" "}
+                    <span className="font-semibold text-foreground">{totalItems}</span>
                 </div>
 
-                <div className="flex gap-3 items-center border border-gray-200">
+                <div className="flex items-center gap-1.5">
                     <Button
                         variant="outline"
                         size="sm"
                         onClick={() => onPageChange(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="px-2 bg-gray-200 rounded-none size-10"
+                        className="size-9 px-0"
                     >
                         <ChevronLeft size={18} />
                     </Button>
-                    <div className="text-sm text-gray-400 ">
-                        Page <span>{currentPage}</span> of{' '}
-                        <span>{totalPages}</span>
+                    <div className="px-2 text-sm tabular-nums text-muted-foreground">
+                        Page <span className="text-foreground">{currentPage}</span> of{" "}
+                        <span className="text-foreground">{totalPages}</span>
                     </div>
                     <Button
                         variant="outline"
                         size="sm"
                         onClick={() => onPageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="px-2 bg-gray-200 rounded-none size-10"
+                        className="size-9 px-0"
                     >
                         <ChevronRight size={18} />
                     </Button>
                 </div>
             </div>
 
-            <Link href={"/exams/new"} className={cn(buttonVariants(), "bg-emerald-500")} >
+            <Link href={"/exams/new"} className={cn(buttonVariants(), "self-start md:self-auto")}>
                 <PlusIcon className='size-4' />
                 Create New Exam
             </Link>

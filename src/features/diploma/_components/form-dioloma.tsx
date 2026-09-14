@@ -16,7 +16,7 @@ import { Textarea } from '@/src/shared/components/ui/textarea'
 
 interface IProps {
     initialData?: CreateDiplomaType
-    isEdit?: Boolean;
+    isEdit?: boolean;
     id?: string
 }
 
@@ -66,84 +66,89 @@ const FormDiploma = ({ initialData, isEdit, id }: IProps) => {
 
     return (
         <FormProvider {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-                <div className="flex justify-end gap-4 px-4 py-3 bg-white border-b border-gray-200">
-
-
-                    <Link href={"/"} className={cn(buttonVariants(), "bg-gray-200 text-black text-sm font-mono")} >
-                        <X />
-                        Cancel
-                    </Link>
-
-                    <Button disabled={isPending} type='submit' className='bg-emerald-500 text-white text-sm font-mono'>
-                        {isPending ? <>
-                            <Loader2 className='size-4 animate-spin' />
-                            <SaveIcon />
-                            Save
-                        </> : <>
-                            <SaveIcon />
-                            Save
-                        </>}
-                    </Button>
-
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-4">
+                    <div>
+                        <h2 className="text-lg font-semibold tracking-tight">
+                            {isEdit ? "Edit Diploma" : "New Diploma"}
+                        </h2>
+                        <p className="text-sm text-muted-foreground">
+                            Save your changes before leaving this page.
+                        </p>
+                    </div>
+                    <div className="flex gap-3">
+                        <Link
+                            href={"/"}
+                            className={cn(buttonVariants({ variant: "outline" }))}
+                        >
+                            <X />
+                            Cancel
+                        </Link>
+                        <Button disabled={isPending} type="submit">
+                            {isPending ? (
+                                <>
+                                    <Loader2 className="size-4 animate-spin" />
+                                    Saving...
+                                </>
+                            ) : (
+                                <>
+                                    <SaveIcon />
+                                    Save
+                                </>
+                            )}
+                        </Button>
+                    </div>
                 </div>
 
-                <div className="p-6">
-                    <div className="bg-white">
+                <div className="rounded-lg border border-border bg-card">
+                    <div className="border-b border-border px-5 py-4">
+                        <p className="font-medium">Diploma Information</p>
+                        <p className="text-sm text-muted-foreground">
+                            Provide a clear title, description, and cover image.
+                        </p>
+                    </div>
+                    <div className="space-y-4 p-5">
+                        <UploadImageField url={initialData?.image || undefined} isEdit={true} />
 
-                        <div className="bg-blue-600 text-white font-mono p-2.5">
-                            <p>Diploma Information</p>
-                        </div>
-                        <div className="p-4 space-y-3">
-                            <UploadImageField url={initialData?.image || undefined} isEdit={true} />
-
-                            <Controller
-                                name="title"
-                                control={form.control}
-                                render={({ field, fieldState }) => (
-                                    <Field>
-                                        <FieldLabel className="font-mono">
-                                            Title
-                                        </FieldLabel>
-                                        <Input
-                                            className="rounded-sm px-4 py-6 border border-[#E5E7EB] font-mono"
-                                            type="text"
-                                            placeholder="Title"
-                                            {...field}
+                        <Controller
+                            name="title"
+                            control={form.control}
+                            render={({ field, fieldState }) => (
+                                <Field>
+                                    <FieldLabel>Title</FieldLabel>
+                                    <Input
+                                        className="h-11"
+                                        type="text"
+                                        placeholder="Frontend Development"
+                                        {...field}
+                                    />
+                                    {fieldState.invalid && (
+                                        <FieldError
+                                            errors={[fieldState.error]}
                                         />
-                                        {fieldState.invalid && (
-                                            <FieldError
-                                                className="text-red-500"
-                                                errors={[fieldState.error]}
-                                            />
-                                        )}
-                                    </Field>
-                                )}
-                            />
-                            <Controller
-                                name="description"
-                                control={form.control}
-                                render={({ field, fieldState }) => (
-                                    <Field>
-                                        <FieldLabel className="font-mono">
-                                            Description
-                                        </FieldLabel>
-                                        <Textarea
-                                            className="rounded-sm px-4 py-6 border border-[#E5E7EB] font-mono"
-
-                                            placeholder="Description"
-                                            {...field}
+                                    )}
+                                </Field>
+                            )}
+                        />
+                        <Controller
+                            name="description"
+                            control={form.control}
+                            render={({ field, fieldState }) => (
+                                <Field>
+                                    <FieldLabel>Description</FieldLabel>
+                                    <Textarea
+                                        className="min-h-28"
+                                        placeholder="A short overview of this diploma track"
+                                        {...field}
+                                    />
+                                    {fieldState.invalid && (
+                                        <FieldError
+                                            errors={[fieldState.error]}
                                         />
-                                        {fieldState.invalid && (
-                                            <FieldError
-                                                className="text-red-500"
-                                                errors={[fieldState.error]}
-                                            />
-                                        )}
-                                    </Field>
-                                )}
-                            />
-                        </div>
+                                    )}
+                                </Field>
+                            )}
+                        />
                     </div>
                 </div>
             </form>

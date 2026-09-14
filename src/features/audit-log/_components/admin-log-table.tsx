@@ -52,17 +52,17 @@ const AdminLogsTable = ({ logs }: { logs: IAuditLogItem[] }) => {
       case "UPDATE":
         return "text-yellow-600";
       case "DELETE":
-        return "text-red-600";
+        return "text-destructive";
       default:
-        return "text-blue-600";
+        return "text-primary";
     }
   }
   function textToRole(action: string) {
     switch (action) {
       case "SUPER_ADMIN":
-        return "text-red-600";
+        return "text-destructive";
       default:
-        return "text-blue-600";
+        return "text-primary";
     }
   }
 
@@ -83,18 +83,18 @@ const AdminLogsTable = ({ logs }: { logs: IAuditLogItem[] }) => {
 
   if (logs?.length === 0) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
-        <p className="text-gray-500">No diplomas found. Try adjusting your filters.</p>
+      <div className="rounded-lg border border-border bg-card p-8 text-center">
+        <p className="text-muted-foreground">No diplomas found. Try adjusting your filters.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+    <div className="rounded-lg border border-border bg-card overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="bg-blue-700 text-white">
+            <tr>
               <th className="px-4 py-3 text-left text-sm font-semibold">Action</th>
               <th className="px-4 py-3 text-left text-sm font-semibold">User</th>
               <th className="px-4 py-3 text-left text-sm font-semibold">Entity</th>
@@ -102,7 +102,7 @@ const AdminLogsTable = ({ logs }: { logs: IAuditLogItem[] }) => {
               <th className="px-4 py-3 text-center text-sm font-semibold flex justify-center">
                 <Menubar>
                   <MenubarMenu>
-                    <MenubarTrigger className="flex items-center border-none rounded-none w-fit hover:bg-transparent">
+                    <MenubarTrigger className="flex items-center border-none w-fit hover:bg-transparent">
                       Sort
                       <ArrowDownWideNarrow className="ml-2 h-4 w-4" />
                     </MenubarTrigger>
@@ -206,30 +206,30 @@ const AdminLogsTable = ({ logs }: { logs: IAuditLogItem[] }) => {
             {logs?.map((log, index) => (
               <tr
                 key={log.id}
-                className={`border-t ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                  } hover:bg-gray-100 transition-colors`}
+                className={`border-t ${index % 2 === 0 ? '' : 'bg-muted/40'
+                  } hover:bg-muted/60 transition-colors`}
               >
                 <td className="px-4 py-3">
                   <div className='space-y-1'>
-                    <p className={`font-mono text-sm ${textToAction(log.action)} font-bold`}>{log.action}</p>
-                    <p className='font-mono text-sm whitespace-nowrap text-gray-400'>Method: {log.httpMethod}</p>
+                    <p className={`text-sm ${textToAction(log.action)} font-bold`}>{log.action}</p>
+                    <p className='text-sm whitespace-nowrap text-muted-foreground'>Method: {log.httpMethod}</p>
                   </div>
                 </td>
                 <td className="px-4 py-3">
-                  <div className="font-mono text-sm font-medium text-gray-900 truncate">
-                    <p className='text-gray-800'>{log.actorUsername}</p>
-                    <p className='text-gray-400'>{log.actorEmail}</p>
+                  <div className="text-sm font-medium text-foreground truncate">
+                    <p className='text-foreground'>{log.actorUsername}</p>
+                    <p className='text-muted-foreground'>{log.actorEmail}</p>
                     <p className={textToRole(log.actorRole)}>{log.actorRole}</p>
                   </div>
                 </td>
                 <td className="px-4 py-3">
-                  <div className="font-mono text-sm font-medium text-gray-800 truncate">
+                  <div className="text-sm font-medium text-foreground truncate">
                     <p>{log.entityType}</p>
-                    <p className='text-gray-400'>{log.entityId}</p>
+                    <p className='text-muted-foreground'>{log.entityId}</p>
                   </div>
                 </td>
                 <td className="px-4 py-3">
-                  <div className="font-mono text-sm font-medium text-gray-800 truncate">
+                  <div className="text-sm font-medium text-foreground truncate">
                     <p>{formatDateTime(log.createdAt).time}</p>
                     <p>{formatDateTime(log.createdAt).date}</p>
 
@@ -239,7 +239,7 @@ const AdminLogsTable = ({ logs }: { logs: IAuditLogItem[] }) => {
                 <td className="px-4 py-3 flex justify-center items-center">
                   <Menubar>
                     <MenubarMenu>
-                      <MenubarTrigger className='h-7.5 w-7.5 flex justify-center items-center px-0 border-none bg-gray-200 rounded-none'>
+                      <MenubarTrigger className='h-7.5 w-7.5 flex justify-center items-center px-0 border-none'>
                         <Ellipsis />
                       </MenubarTrigger>
                       <MenubarContent>
@@ -251,7 +251,7 @@ const AdminLogsTable = ({ logs }: { logs: IAuditLogItem[] }) => {
                           </MenubarItem>
 
                           <MenubarItem className="flex items-center gap-2">
-                            <Trash2 className="h-4 w-4 text-red-500" />
+                            <Trash2 className="h-4 w-4 text-destructive" />
                             Delete
                           </MenubarItem>
                         </MenubarGroup>

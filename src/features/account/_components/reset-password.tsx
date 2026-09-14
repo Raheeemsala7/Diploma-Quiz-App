@@ -29,7 +29,6 @@ const ResetPassword = () => {
     })
 
     const onSubmit = (values: ResetPasswordType) => {
-        console.log(values)
         mutate({ newPassword: values.newPassword, confirmPassword: values.confirmPassword, currentPassword: values.currentPassword }, {
             onSuccess: () => {
                 toast.success("Done Reset Password")
@@ -55,13 +54,13 @@ const ResetPassword = () => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                     <Field>
-                        <FieldLabel className="font-mono">
+                        <FieldLabel>
                             Current Password
                         </FieldLabel>
 
                         <div className="relative">
                             <Input
-                                className="rounded-sm px-4 py-6 pr-10 border border-[#E5E7EB] font-mono"
+                                className="px-4 py-6 pr-10 border-border"
                                 type={showCurrentPassword ? "text" : "password"}
                                 placeholder="Enter your password"
                                 {...field}
@@ -71,15 +70,14 @@ const ResetPassword = () => {
                             <button
                                 type="button"
                                 onClick={() => setShowCurrentPassword((prev) => !prev)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                             >
-                                {showCurrentPassword ? "🙈" : "👁"}
+                                {showCurrentPassword ? "Hide" : "Show"}
                             </button>
                         </div>
 
                         {fieldState.invalid && (
                             <FieldError
-                                className="text-red-500"
                                 errors={[fieldState.error]}
                             />
                         )}
@@ -91,13 +89,13 @@ const ResetPassword = () => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                     <Field>
-                        <FieldLabel className="font-mono">
+                        <FieldLabel>
                             New Password
                         </FieldLabel>
 
                         <div className="relative">
                             <Input
-                                className="rounded-sm px-4 py-6 pr-10 border border-[#E5E7EB] font-mono"
+                                className="px-4 py-6 pr-10 border-border"
                                 type={showCurrentPassword ? "text" : "password"}
                                 placeholder="Enter your password"
                                 {...field}
@@ -107,15 +105,14 @@ const ResetPassword = () => {
                             <button
                                 type="button"
                                 onClick={() => setShowCurrentPassword((prev) => !prev)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                             >
-                                {showCurrentPassword ? "🙈" : "👁"}
+                                {showCurrentPassword ? "Hide" : "Show"}
                             </button>
                         </div>
 
                         {fieldState.invalid && (
                             <FieldError
-                                className="text-red-500"
                                 errors={[fieldState.error]}
                             />
                         )}
@@ -129,13 +126,13 @@ const ResetPassword = () => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                     <Field>
-                        <FieldLabel className="font-mono">
+                        <FieldLabel>
                             Confirm New Password
                         </FieldLabel>
 
                         <div className="relative">
                             <Input
-                                className="rounded-sm px-4 py-6 pr-10 border border-[#E5E7EB] font-mono"
+                                className="px-4 py-6 pr-10 border-border"
                                 type={showConfirmPassword ? "text" : "password"}
                                 placeholder="Confirm your password"
                                 {...field}
@@ -144,15 +141,14 @@ const ResetPassword = () => {
                             <button
                                 type="button"
                                 onClick={() => setShowConfirmPassword((prev) => !prev)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                             >
-                                {showConfirmPassword ? "🙈" : "👁"}
+                                {showConfirmPassword ? "Hide" : "Show"}
                             </button>
                         </div>
 
                         {fieldState.invalid && (
                             <FieldError
-                                className="text-red-500"
                                 errors={[fieldState.error]}
                             />
                         )}
@@ -162,13 +158,13 @@ const ResetPassword = () => {
 
 
             {/* Error */}
-            <div className='bg-red-200'>
+            <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
                 {error}
             </div>
             {/* Submit */}
             <Button
                 type="submit"
-                className="w-full bg-[#2563EB] text-white font-mono py-5 mt-5"
+                className="w-full mt-5"
                 disabled={isPending}
             >
                 {isPending ? <>

@@ -30,7 +30,7 @@ const page = async ({ params }: IProps) => {
 
 
   return (
-    <QuizComponent examInfo={examInfo.payload} questions={questionsPayload.questions} />
+    <QuizComponent examInfo={examInfo.payload} questions={questionsPayload} />
   )
 }
 

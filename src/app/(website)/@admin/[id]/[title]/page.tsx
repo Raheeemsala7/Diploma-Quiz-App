@@ -2,7 +2,7 @@ import ModelDeleteDiploma from '@/src/features/diploma/_components/modal-delete-
 import { getDiplomaApi } from '@/src/features/diploma/apis/diploma.api';
 import { Button, buttonVariants } from '@/src/shared/components/ui/button';
 import { cn } from '@/src/shared/lib/utils';
-import { Ban, PenLine, Trash2 } from 'lucide-react';
+import { Ban, PenLine } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import slugify from 'slugify'
@@ -16,7 +16,7 @@ interface IProps {
 
 const page = async ({ params }: IProps) => {
 
-  let { id, title } = await params
+  const { id, title } = await params
 
   const data = await getDiplomaApi(id)
 
@@ -26,18 +26,18 @@ const page = async ({ params }: IProps) => {
 
   const diploma = data.payload.diploma
 
-
-
   return (
-    <>
-      <div className='flex items-center justify-between gap-4 px-4 py-3 bg-white border-t border-gray-200'>
-        <h5 className='text-lg font-semibold'>{title.split("-").join(" ")}</h5>
-        <div className="flex items-center gap-4">
-          <Button className='font-mono bg-gray-200 text-black p-4 gap-2.5'>
+    <div className="space-y-4">
+      <div className='flex flex-col gap-4 rounded-lg border border-border bg-card p-4 md:flex-row md:items-center md:justify-between'>
+        <h5 className="text-lg font-semibold tracking-tight text-foreground">
+          {title.split("-").join(" ")}
+        </h5>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button variant="outline" className="gap-2.5">
             <Ban />
             Immutable
           </Button>
-          <Link className={cn(buttonVariants() , "font-mono p-4 gap-2.5 bg-blue-600")} href={`/${diploma.id}/${slugify(diploma.title, { lower: false })}/edit`}>
+          <Link className={cn(buttonVariants(), "gap-2.5")} href={`/${diploma.id}/${slugify(diploma.title, { lower: false })}/edit`}>
             <PenLine />
             Edit
           </Link>
@@ -45,24 +45,25 @@ const page = async ({ params }: IProps) => {
         </div>
       </div>
 
-      <div className="p-6">
-        <div className="bg-white p-4">
-          <p className='text-gray-400 mb-4 font-mono'>Image</p>
-          <div className='w-75 h-75 relative'>
+      <div className="rounded-lg border border-border bg-card">
+        <div className="grid gap-6 p-5 md:grid-cols-[220px_1fr]">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-muted">
             <Image src={diploma.image} className='object-cover' fill alt={diploma.title} />
           </div>
 
-          <div className="mt-4">
-            <p className='text-gray-400 mb-1 font-mono'>Title</p>
-            <h6 className='font-mono'>{diploma.title}</h6>
-          </div>
-          <div className="mt-4">
-            <p className='text-gray-400 mb-1 font-mono'>Description</p>
-            <p className='font-mono'>{diploma.description}</p>
+          <div className="space-y-4">
+            <div>
+              <p className='mb-1 text-xs font-medium tracking-wide text-muted-foreground uppercase'>Title</p>
+              <h6 className='font-medium text-foreground'>{diploma.title}</h6>
+            </div>
+            <div>
+              <p className='mb-1 text-xs font-medium tracking-wide text-muted-foreground uppercase'>Description</p>
+              <p className='text-sm leading-relaxed text-muted-foreground'>{diploma.description}</p>
+            </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

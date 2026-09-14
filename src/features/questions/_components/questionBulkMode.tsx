@@ -46,19 +46,15 @@ const QuestionBulkMode = ({ id, multiQuestion, setMultiQuestion, singleQuestion,
         }
 
        
-    }, [questions, setMultiQuestion])
-
-
-
-        console.log("RENDER FORM COMP BULK QUESTION INFO")
+    }, [questions, setMultiQuestion, setSingleQuestion, setOriginalQuestions, id])
 
 
 
 
     if (isLoading) {
         return (
-            <div className='flex items-center gap-2 p-6'>
-                <Loader2 className='animate-spin size-4' />
+            <div className='flex items-center gap-2 p-4 text-sm text-muted-foreground'>
+                <Loader2 className='size-4 animate-spin' />
                 Loading questions...
             </div>
         )
@@ -66,38 +62,44 @@ const QuestionBulkMode = ({ id, multiQuestion, setMultiQuestion, singleQuestion,
 
     if (isError) {
         return (
-            <div className='p-6 text-red-500'>
+            <div className='rounded-md border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive'>
                 {(error as Error).message || "Failed to load questions"}
             </div>
         )
     }
 
 
-    console.log(multiQuestion)
-
     return (
-        <div className='bg-white space-y-4'>
-            <div className='flex'>
-                <div className="flex-1 flex items-center ">
+        <div className='space-y-4'>
+            <div className='flex flex-wrap items-center gap-2'>
+                <div className="flex flex-1 flex-wrap overflow-hidden rounded-lg border border-border">
                     {multiQuestion.map((que, index) => (
-                        <div className={cn('h-10 w-31 py-2.5 text-center border-r border-gray-200',
-                            singleQuestion.id === que.id ? 'bg-blue-50 text-blue-600 border border-blue-500' : ''
-                        )} onClick={() => {
-                            setSingleQuestion({
-                                id: que.id,
-                                text: que.text,
-                                examId: id,
-                                immutable: false,
-                                answers: que.answers,
-                                isNew: true
-                            })
-                        }}>
+                        <button
+                            key={que.id}
+                            type="button"
+                            className={cn(
+                                'min-w-12 border-r border-border bg-muted/40 px-4 py-2.5 text-center text-sm font-medium transition-colors last:border-r-0',
+                                singleQuestion.id === que.id
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'text-muted-foreground hover:bg-muted'
+                            )}
+                            onClick={() => {
+                                setSingleQuestion({
+                                    id: que.id,
+                                    text: que.text,
+                                    examId: id,
+                                    immutable: false,
+                                    answers: que.answers,
+                                    isNew: true
+                                })
+                            }}
+                        >
                             Q{index + 1}
-                        </div>
+                        </button>
                     ))}
                 </div>
-                <Button size={"icon"} className='bg-gray-200 text-black' onClick={() => {
-                    const newQuestion = {
+                <Button size={"icon"} variant="outline" onClick={() => {
+                    const newQuestion: ExamQuestion = {
                         id: Date.now().toString(),
                         text: '',
                         answers: [],
@@ -108,30 +110,31 @@ const QuestionBulkMode = ({ id, multiQuestion, setMultiQuestion, singleQuestion,
 
                     setSingleQuestion(newQuestion)
                     setMultiQuestion([...multiQuestion, newQuestion])
-                }}>
+                }} aria-label="Add new question">
                     <Plus />
                 </Button>
 
 
             </div>
-            <div className='space-y-2 mb-4'>
-                <Label >Question Headline</Label>
-                <Input value={singleQuestion.text} onChange={(e) => {
-                    const updated = {
-                        ...singleQuestion,
-                        text: e.target.value,
-                    }
+            <div className='space-y-2'>
+                <Label>Question Headline</Label>
+                <Input value={singleQuestion.text} placeholder="Write the question here"
+                    onChange={(e) => {
+                        const updated = {
+                            ...singleQuestion,
+                            text: e.target.value,
+                        }
 
-                    setSingleQuestion(updated)
+                        setSingleQuestion(updated)
 
-                    setMultiQuestion((prev: IQueItem[]) =>
-                        prev.map((q) =>
-                            q.id === updated.id
-                                ? { ...q, text: updated.text }
-                                : q
+                        setMultiQuestion((prev: IQueItem[]) =>
+                            prev.map((q) =>
+                                q.id === updated.id
+                                    ? { ...q, text: updated.text }
+                                    : q
+                            )
                         )
-                    )
-                }}
+                    }}
                 />
             </div>
         </div>

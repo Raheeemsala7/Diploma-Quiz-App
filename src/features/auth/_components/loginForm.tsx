@@ -18,8 +18,6 @@ const LoginForm = () => {
     });
 
     const onSubmit = async (data: SignInFormType) => {
-        console.log(data)
-
         const res = await signIn("credentials", {
             username: data.username,
             password: data.password,
@@ -41,18 +39,17 @@ const LoginForm = () => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                     <Field>
-                        <FieldLabel className="font-mono">
+                        <FieldLabel>
                             Username
                         </FieldLabel>
                         <Input
-                            className="rounded-sm px-4 py-6 border border-[#E5E7EB] font-mono"
+                            className="px-4 py-6 border-border"
                             type="text"
                             placeholder="Ahmed"
                             {...field}
                         />
                         {fieldState.invalid && (
                             <FieldError
-                                className="text-red-500"
                                 errors={[fieldState.error]}
                             />
                         )}
@@ -64,18 +61,17 @@ const LoginForm = () => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                     <Field>
-                        <FieldLabel className="font-mono">
+                        <FieldLabel>
                             Password
                         </FieldLabel>
                         <Input
-                            className="rounded-sm px-4 py-6 border border-[#E5E7EB] font-mono"
+                            className="px-4 py-6 border-border"
                             type="password"
                             placeholder="*********"
                             {...field}
                         />
                         {fieldState.invalid && (
                             <FieldError
-                                className="text-red-500"
                                 errors={[fieldState.error]}
                             />
                         )}

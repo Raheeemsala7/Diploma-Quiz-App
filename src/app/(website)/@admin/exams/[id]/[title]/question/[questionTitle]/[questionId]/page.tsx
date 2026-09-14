@@ -17,60 +17,70 @@ const page = async ({ params }: {
 
     const { questionTitle, questionId, title, id } = await params
 
-    console.log(id, title, questionId, questionTitle)
-
     const questionInfo = await getSingleQuestionApi(questionId)
 
-
-
     return (
-        <>
-            <div className='flex items-center justify-between gap-4 px-4 py-3 bg-white border-t border-gray-200'>
+        <div className="space-y-4">
+            <div className='flex flex-col gap-4 rounded-lg border border-border bg-card p-4 md:flex-row md:items-center md:justify-between'>
                 <div>
-                    <h5 className='text-lg font-semibold'>{questionTitle.split("-").join(" ")}</h5>
-                    <p className='text-gray-400 text-sm flex'>Exam : {"   "} <Link className='underline text-gray-400 flex items-center gap-1' href={`/exams/${id}/${title}`}> {title} <ExternalLink size={14} /></Link></p>
+                    <h5 className='text-lg font-semibold tracking-tight text-foreground'>{questionTitle.split("-").join(" ")}</h5>
+                    <p className='mt-1 flex items-center gap-1 text-sm text-muted-foreground'>
+                        Exam :{" "}
+                        <Link className="flex items-center gap-1 text-primary underline underline-offset-4" href={`/exams/${id}/${title}`}>
+                            {title}
+                            <ExternalLink size={14} />
+                        </Link>
+                    </p>
                 </div>
-                <div className="flex items-center gap-4">
-                    <Button className='font-mono bg-gray-200 text-black p-4 gap-2.5'>
+                <div className="flex flex-wrap items-center gap-3">
+                    <Button variant="outline" className="gap-2.5">
                         <Ban />
                         Immutable
                     </Button>
-                    <Link className={cn(buttonVariants(), "font-mono p-4 gap-2.5 bg-blue-600")}
-                        href={`/exams/${id}/${slugify(title, { lower: false })}/question/${slugify(questionId[1], { lower: false })}/${questionId[0]}`}
-
+                    <Link className={cn(buttonVariants(), "gap-2.5")}
+                        href={`/exams/${id}/${slugify(title, { lower: false })}/question/${slugify(questionTitle, { lower: false })}/${questionId}/edit`}
                     >
                         <PenLine />
                         Edit
                     </Link>
-                    <Button className='font-mono p-4 gap-2.5' variant={"destructive"}>
+                    <Button variant="destructive" className="gap-2.5">
                         <Trash2 />
                         Delete
                     </Button>
                 </div>
             </div>
 
-            <div className="p-6">
-                <div className="bg-white p-4">
-
-
-                    <div className="mt-4">
-                        <p className='text-gray-400 mb-1 font-mono'>Headline</p>
-                        <h6 className='font-mono'>{questionInfo.question.text}</h6>
+            <div className="rounded-lg border border-border bg-card">
+                <div className="space-y-4 p-5">
+                    <div>
+                        <p className='mb-1 text-xs font-medium tracking-wide text-muted-foreground uppercase'>Headline</p>
+                        <h6 className='font-medium text-foreground'>{questionInfo.question.text}</h6>
                     </div>
-                    <div className="mt-4">
-                        <p className='text-gray-400 mb-1 font-mono'>Exam</p>
-                        <p className='font-mono'>{questionInfo.question.exam.title}</p>
+                    <div>
+                        <p className='mb-1 text-xs font-medium tracking-wide text-muted-foreground uppercase'>Exam</p>
+                        <p className='text-sm text-foreground'>{questionInfo.question.exam.title}</p>
                     </div>
-                    <div className="mt-4">
-                        <p className='text-gray-400 mb-1 font-mono'>Answer</p>
-                        <p className='font-mono'>{questionInfo.question.answers.length}</p>
+                    <div>
+                        <p className='mb-1 text-xs font-medium tracking-wide text-muted-foreground uppercase'>Answers</p>
+                        <div className="divide-y divide-border rounded-lg border border-border">
+                            {questionInfo.question.answers.length === 0 && (
+                                <p className="p-3 text-sm text-muted-foreground">No answers</p>
+                            )}
+                            {questionInfo.question.answers.map((answer) => (
+                                <div key={answer.id} className="flex items-center justify-between gap-3 px-3 py-2.5">
+                                    <p className="text-sm text-foreground">{answer.text}</p>
+                                    {answer.isCorrect && (
+                                        <span className="rounded-md bg-success/10 px-2 py-0.5 text-xs font-medium text-success">
+                                            Correct
+                                        </span>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
                     </div>
-
                 </div>
-
-
             </div>
-        </>
+        </div>
     )
 }
 

@@ -55,15 +55,11 @@ useEffect(() => {
     }
 }, [data])
 
-    console.log(data)
-
     if (isLoading) {
         return <p>loading...</p>
     }
 
     const onSubmit = (values: ProfileFormType) => {
-        console.log(values)
-
         const { firstName, lastName, phone } = values
 
         mutate({
@@ -89,16 +85,15 @@ useEffect(() => {
                     control={form.control}
                     render={({ field, fieldState }) => (
                         <Field>
-                            <FieldLabel className="font-mono">First Name</FieldLabel>
+                            <FieldLabel>First Name</FieldLabel>
                             <Input
-                                className=" px-4 py-6 border border-[#E5E7EB] rounded-0 font-mono"
+                                className="px-4 py-6 border-border"
                                 type="text"
                                 placeholder="Mohammed"
                                 {...field}
                             />
                             {fieldState.invalid && (
                                 <FieldError
-                                    className="text-red-500"
                                     errors={[fieldState.error]}
                                 />
                             )}
@@ -110,16 +105,15 @@ useEffect(() => {
                     control={form.control}
                     render={({ field, fieldState }) => (
                         <Field>
-                            <FieldLabel className="font-mono">Last Name</FieldLabel>
+                            <FieldLabel>Last Name</FieldLabel>
                             <Input
-                                className=" px-4 py-6 border border-[#E5E7EB] rounded-0 font-mono"
+                                className="px-4 py-6 border-border"
                                 type="text"
                                 placeholder="Ahmed"
                                 {...field}
                             />
                             {fieldState.invalid && (
                                 <FieldError
-                                    className="text-red-500"
                                     errors={[fieldState.error]}
                                 />
                             )}
@@ -132,9 +126,9 @@ useEffect(() => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                     <Field>
-                        <FieldLabel className="font-mono">Username</FieldLabel>
+                        <FieldLabel>Username</FieldLabel>
                         <Input
-                            className=" px-4 py-6 border border-[#E5E7EB] rounded-0 font-mono"
+                            className="px-4 py-6 border-border"
                             type="text"
                             placeholder="Ahmed"
                             disabled
@@ -142,7 +136,6 @@ useEffect(() => {
                         />
                         {fieldState.invalid && (
                             <FieldError
-                                className="text-red-500"
                                 errors={[fieldState.error]}
                             />
                         )}
@@ -154,12 +147,12 @@ useEffect(() => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                     <Field>
-                        <FieldLabel className="font-mono flex justify-between">
+                        <FieldLabel className="flex justify-between">
                             <span>Email</span>
                             <ModelChangeEmail />
                         </FieldLabel>
                         <Input
-                            className=" px-4 py-6 border border-[#E5E7EB] rounded-0 font-mono"
+                            className="px-4 py-6 border-border"
                             type="email"
                             placeholder="user@example.com"
                             readOnly
@@ -167,7 +160,6 @@ useEffect(() => {
                         />
                         {fieldState.invalid && (
                             <FieldError
-                                className="text-red-500"
                                 errors={[fieldState.error]}
                             />
                         )}
@@ -176,7 +168,7 @@ useEffect(() => {
             />
 
             <Field>
-                <FieldLabel className="font-mono">Phone </FieldLabel>
+                <FieldLabel>Phone </FieldLabel>
                 <Controller
                     name="countryCode"
                     control={form.control}
@@ -197,7 +189,6 @@ useEffect(() => {
                                     />
                                     {(phoneState.invalid || countryState.invalid) && (
                                         <FieldError
-                                            className="text-red-500"
                                             errors={[phoneState.error, countryState.error]}
                                         />
                                     )}
@@ -212,7 +203,7 @@ useEffect(() => {
                 <ModelDeleteAccount />
                 <Button
                   disabled={!form.formState.isDirty}
-                className="flex-1 !px-4 !py-2.5 !h-auto bg-blue-600 text-white font-mono" type="submit">
+                className="flex-1" type="submit">
                     Save Changes
                 </Button>
             </div>
