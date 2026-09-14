@@ -12,7 +12,7 @@ export default function DiplomaCard({
 }) {
   return (
     <Link
-      href={`/${diploma.id}/${slugify(diploma.title, { lower: true })}`}
+      href={`/dashboard/${diploma.id}/${slugify(diploma.title, { lower: true })}`}
       className="group relative block overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-md"
       style={{
         animation: `fadeInUp 0.4s ease ${(index % 6) * 0.06}s both`,

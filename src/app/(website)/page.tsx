@@ -9,9 +9,9 @@ import {
 } from "lucide-react"
 import type { Metadata } from "next"
 import Link from "next/link"
-import LogoApp from "@/src/shared/components/icons/Logo"
 import { buttonVariants } from "@/src/shared/components/ui/button"
 import { cn } from "@/src/shared/lib/utils"
+import { PublicHeader } from "./_components/public-header"
 
 export const metadata: Metadata = {
   title: "Exam App — Prove your skills, exam by exam",
@@ -177,27 +177,7 @@ function ExamResultPreview() {
 const HomePage = () => {
   return (
     <div className="min-h-dvh bg-background">
-      <div className="mx-auto w-full max-w-6xl px-4 lg:px-8">
-        <header className="flex h-16 items-center justify-between lg:h-20">
-          <Link href="/" aria-label="Exam App home">
-            <LogoApp />
-          </Link>
-          <nav className="flex items-center gap-2" aria-label="Account">
-            <Link
-              href="/auth/login"
-              className={cn(buttonVariants({ variant: "ghost" }), "h-9 px-4")}
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/auth/register"
-              className={cn(buttonVariants(), "h-9 px-4")}
-            >
-              Create account
-            </Link>
-          </nav>
-        </header>
-      </div>
+      <PublicHeader />
 
       <div className="mx-auto w-full max-w-6xl space-y-20 px-4 pb-20 lg:px-8 lg:pb-28">
       {/* Hero */}
