@@ -11,7 +11,8 @@ export interface IAuditLogItem {
     entityType: string;
     entityId: string;
     metadata: {
-        [key: string]: any;
+        keys?: string[];
+        [key: string]: unknown;
     };
     ipAddress: string;
     userAgent: string;

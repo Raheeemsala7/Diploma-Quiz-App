@@ -5,22 +5,18 @@ import { Controller, useForm } from "react-hook-form"
 import { ProfileFormType, profileSchema } from "../schema/profile-schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useGetAccount, useUpdateProfile } from "../hooks/use-account"
-import { Loader } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { useEffect } from "react"
 import CountryPhoneSelector from "@/src/app/auth/register/_components/country-phone-selector"
 import ModelDeleteAccount from "./model-delete-account"
 import { Button } from "@/src/shared/components/ui/button"
 import ModelChangeEmail from "./model-change-email"
 import { toast } from "sonner"
-import { IUser } from "../../auth/types/user"
-import { IConfirmEmailResponse, IPayloadEmailConfirm } from "../types/account"
 
 const UpdateForm = () => {
 
     const { data, isLoading } = useGetAccount()
 
     const { mutate } = useUpdateProfile()
-    const [initialData, setInitialData] = useState<IUser | null>(null)
 
 
 
@@ -70,8 +66,9 @@ useEffect(() => {
             onSuccess() {
                 toast.success("Your data has been updated.")
             },
-            onError: (error: any) => {
-                toast.error(error.message || "Failed to delete account")
+            onError: (error) => {
+                const message = error instanceof Error ? error.message : "Failed to delete account";
+                toast.error(message)
             }
         })
     }

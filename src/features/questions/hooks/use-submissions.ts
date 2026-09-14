@@ -22,14 +22,26 @@ export const useSubmissions = () => {
             const result = await response.json();
 
             if (!response.ok) {
+                const validationErrors = (
+                    Array.isArray(result?.errors) ? result.errors : []
+                ) as Array<{ path: string; message: string }>;
+                const details = validationErrors
+                    .map((e) => e.message)
+                    .filter(Boolean)
+                    .join(", ");
+
+                const message = details
+                    ? `${result?.message || "Request failed"}: ${details}`
+                    : result?.message || `Request failed (${response.status})`;
+
                 const error: IErrorResponse = {
                     status: false,
-                    code: result.code || response.status,
-                    message: result.message || "Request failed",
-                    errors: result.errors || [],
+                    code: result?.code || response.status,
+                    message,
+                    errors: validationErrors,
                 };
 
-                const err = new Error(error.message) as Error & IErrorResponse;
+                const err = new Error(message) as Error & IErrorResponse;
                 Object.assign(err, error);
 
                 throw err;

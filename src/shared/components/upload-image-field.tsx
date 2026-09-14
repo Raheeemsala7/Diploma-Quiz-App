@@ -8,7 +8,7 @@ import { useUploadImage } from '../hooks/use-upload-image'
 import { Progress } from './ui/progress'
 import { toast } from 'sonner'
 import { CreateDiplomaType } from '@/src/features/diploma/schema/diploma.schema'
-import { CloudUpload, CloudUploadIcon, Download, FileImage, Trash, Trash2 } from 'lucide-react'
+import { CloudUploadIcon, Download, FileImage, Trash2 } from 'lucide-react'
 
 interface IProps {
     url?: string;
@@ -19,11 +19,11 @@ const UploadImageField = ({ isEdit, url }: IProps) => {
 
     const { isPending, mutate, uploadProgress } = useUploadImage()
     const inputRef = useRef<HTMLInputElement | null>(null)
-    const [preview, setPreview] = useState<string | null>(null)
+    const [preview, setPreview] = useState<string | null>(() => (isEdit && url ? url : null))
     const [uploadedImage, setUploadedImage] = useState<{
         name: string
         size: number
-    } | null>(null)
+    } | null>(() => (isEdit && url ? { name: "uploaded-image", size: 0 } : null))
 
 
     const diplomaForm = useFormContext<CreateDiplomaType>()
@@ -35,17 +35,6 @@ const UploadImageField = ({ isEdit, url }: IProps) => {
         resolver: zodResolver(uploadImageSchema),
         mode: "onChange"
     })
-
-
-    useEffect(() => {
-        if (isEdit && url) {
-            setPreview(url)
-            setUploadedImage({
-                name: "uploaded-image",
-                size: 0
-            })
-        }
-    }, [])
 
 
     useEffect(() => {
@@ -63,7 +52,6 @@ const UploadImageField = ({ isEdit, url }: IProps) => {
                         },
                         onSuccess: (data) => {
                             toast.success("uploaded image successfully")
-                            console.log(data.url)
                             diplomaForm.setValue("image", data.url)
 
                             // LOCAL PREVIEW
@@ -90,7 +78,7 @@ const UploadImageField = ({ isEdit, url }: IProps) => {
         <Controller
             name="image"
             control={form.control}
-            render={({ field: { value: _value, onChange, ...field }, fieldState }) => (
+            render={({ field: { onChange, ...field }, fieldState }) => (
                 <Field>
                     <FieldLabel>
                         Image
@@ -154,6 +142,7 @@ const UploadImageField = ({ isEdit, url }: IProps) => {
                                     placeholder="Description"
                                     onChange={(e) => onChange(e.target.files?.[0])}
                                     {...field}
+                                    value=""
                                     ref={inputRef}
                                 />
                             </div>
@@ -164,13 +153,13 @@ const UploadImageField = ({ isEdit, url }: IProps) => {
                     {isPending && <Progress value={uploadProgress} />}
                     {fieldState.invalid && (
                         <FieldError
-                            className="text-red-500"
+                            className="text-destructive"
                             errors={[fieldState.error]}
                         />
                     )}
                     {errors.image && (
                         <FieldError
-                            className="text-red-500"
+                            className="text-destructive"
                             errors={[errors.image]}
                         />
                     )}

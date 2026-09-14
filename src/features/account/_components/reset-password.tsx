@@ -2,7 +2,7 @@
 import { Button } from '@/src/shared/components/ui/button';
 import { Field, FieldError, FieldLabel } from '@/src/shared/components/ui/field'
 import { Input } from '@/src/shared/components/ui/input'
-import { DiamondIcon, Loader2Icon } from 'lucide-react';
+import { Loader2Icon } from 'lucide-react';
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { resetPasswordSchema, ResetPasswordType } from '../schema/profile-schema';
@@ -14,7 +14,6 @@ import { toast } from 'sonner';
 const ResetPassword = () => {
 
     const [showCurrentPassword, setShowCurrentPassword] = useState(false)
-    const [showNewPassword, setShowNewPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [error, setError] = useState("")
     const { mutate, isPending } = useResetPassword()
@@ -169,7 +168,7 @@ const ResetPassword = () => {
             >
                 {isPending ? <>
                     <Loader2Icon className='animate-spin' />
-                    "Update Password..."
+                    Update Password...
                 </> : "update password"}
 
             </Button>

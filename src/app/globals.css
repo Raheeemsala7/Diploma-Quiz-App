@@ -65,6 +65,9 @@
 :root {
   --radius: 0.5rem;
 
+  /* Native controls (scrollbars, form pickers, date inputs) follow the theme */
+  color-scheme: light;
+
   /* Surface + ink */
   --background: oklch(0.975 0.006 80);
   --foreground: oklch(0.26 0.014 70);
@@ -117,6 +120,8 @@
 }
 
 .dark {
+  color-scheme: dark;
+
   --background: oklch(0.21 0.012 70);
   --foreground: oklch(0.93 0.008 80);
   --card: oklch(0.255 0.013 70);

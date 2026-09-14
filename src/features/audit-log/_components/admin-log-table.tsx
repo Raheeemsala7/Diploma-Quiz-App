@@ -10,10 +10,9 @@ import {
   Eye,
   Trash2
 } from "lucide-react";
-import { Menubar, MenubarContent, MenubarGroup, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from '@/src/shared/components/ui/menubar';
+import { Menubar, MenubarContent, MenubarGroup, MenubarItem, MenubarMenu, MenubarTrigger } from '@/src/shared/components/ui/menubar';
 import { useRouter, useSearchParams } from "next/navigation";
-import slugify from "slugify";
-import { IAdminLog, IAuditLogItem } from '../types/audit';
+import { IAuditLogItem } from '../types/audit';
 
 
 

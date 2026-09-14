@@ -1,8 +1,8 @@
 "use client"
 import { Stepper, StepperIndicator, StepperItem, StepperNav, StepperSeparator, StepperTrigger } from '@/src/shared/components/reui/stepper';
 import { Button } from '@/src/shared/components/ui/button'
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogTrigger } from '@/src/shared/components/ui/dialog'
-import { DiamondIcon, Loader2Icon, PencilLine, TriangleAlertIcon } from 'lucide-react'
+import { Dialog, DialogContent, DialogFooter, DialogTrigger } from '@/src/shared/components/ui/dialog'
+import { DiamondIcon, Loader2Icon, PencilLine } from 'lucide-react'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form';
 import { emailRequestSchema, EmailRequestType } from '../schema/profile-schema';
@@ -46,8 +46,9 @@ const ModelChangeEmail = () => {
                 toast.success("Verification email sent successfully.")
                 setStep(2)
             },
-            onError: (error: any) => {
-                toast.error(error.message || "Failed to delete account")
+            onError: (error) => {
+                const message = error instanceof Error ? error.message : "Failed to delete account";
+                toast.error(message)
             }
         })
     }
@@ -61,8 +62,9 @@ const ModelChangeEmail = () => {
                 setOpen(false)
                 setStep(1)
             },
-            onError: (error: any) => {
-                toast.error(error.message || "Failed to delete account")
+            onError: (error) => {
+                const message = error instanceof Error ? error.message : "Failed to delete account";
+                toast.error(message)
             }
         })
     }
@@ -81,7 +83,7 @@ const ModelChangeEmail = () => {
 
                 <Stepper value={step} className="w-full max-w-2xl mx-auto">
                     <StepperNav>
-                        {steps.map(({ step: s, label, icon: Icon }) => (
+                        {steps.map(({ step: s, icon: Icon }) => (
                             <StepperItem key={s} step={s} >
                                 <StepperTrigger>
                                     <StepperIndicator

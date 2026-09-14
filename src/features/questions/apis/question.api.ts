@@ -17,7 +17,7 @@ export const getQuestionsApi = async (
     }
 ): Promise<IQueItem[]> => {
 
-    let token = await getNextAuthToken();
+    const token = await getNextAuthToken();
     
     if (!token)  throw new Error("Unauthorized");
 
@@ -151,7 +151,8 @@ export const postSubmissions = async ({ req, body }: { req: NextRequest; body: I
         method: "POST",
         body: JSON.stringify(body),
         headers: {
-            ...HEADERS.authorize(token.token)
+            ...HEADERS.authorize(token.token),
+            ...HEADERS.JsonBody,
         }
     })
 

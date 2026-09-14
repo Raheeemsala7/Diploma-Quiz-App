@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useEffect, useMemo, useState } from "react";
+import { useDeferredValue, useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 
 import { Button } from "@/src/shared/components/ui/button";

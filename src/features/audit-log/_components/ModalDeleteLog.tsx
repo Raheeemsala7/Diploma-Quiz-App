@@ -1,18 +1,15 @@
 "use client"
 import { Button } from '@/src/shared/components/ui/button'
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/shared/components/ui/dialog'
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogTrigger } from '@/src/shared/components/ui/dialog'
 import { Loader2Icon, Trash2, TriangleAlertIcon } from 'lucide-react'
-import { toast } from 'sonner'
 // import {  useDeleteExam } from '../hooks/hooks'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 
-const ModelDeleteLog = ({ id }: { id: string }) => {
+const ModelDeleteLog = () => {
     // const { mutate, isPending } = useDeleteLog()
     const isPending = false
 
     const [isOpen, setIsOpen] = useState(false)
-    const router = useRouter()
 
 
     const handelRemoveAccount = () => {

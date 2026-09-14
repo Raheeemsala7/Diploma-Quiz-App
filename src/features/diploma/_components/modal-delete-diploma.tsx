@@ -1,6 +1,6 @@
 "use client"
 import { Button } from '@/src/shared/components/ui/button'
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/shared/components/ui/dialog'
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogTrigger } from '@/src/shared/components/ui/dialog'
 import { Loader2Icon, Trash2, TriangleAlertIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import { useDeleteDiploma } from '../hooks/hooks'

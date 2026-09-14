@@ -1,6 +1,7 @@
 import React from "react"
 import { BookOpenCheck, Brain, RectangleEllipsis } from "lucide-react"
 import LogoApp from "@/src/shared/components/icons/Logo"
+import { ThemeToggle } from "@/src/shared/components/ui/theme-toggle"
 
 const features = [
   {
@@ -66,7 +67,8 @@ const layout = ({ children }: { children: React.ReactNode }) => {
       </div>
 
       {/* Form panel */}
-      <div className="flex min-h-dvh flex-col items-center justify-center px-6 py-12">
+      <div className="relative flex min-h-dvh flex-col items-center justify-center px-6 py-12">
+        <ThemeToggle className="absolute top-4 right-4 text-muted-foreground hover:bg-muted hover:text-foreground" />
         <div className="mb-10 lg:hidden">
           <LogoApp />
         </div>

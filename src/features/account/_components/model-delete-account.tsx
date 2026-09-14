@@ -1,6 +1,6 @@
 "use client"
 import { Button } from '@/src/shared/components/ui/button'
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/shared/components/ui/dialog'
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogTrigger } from '@/src/shared/components/ui/dialog'
 import { Loader2Icon, TriangleAlertIcon } from 'lucide-react'
 import { useRemoveAccount } from '../hooks/use-account'
 import { toast } from 'sonner'
@@ -15,8 +15,9 @@ const ModelDeleteAccount = () => {
                 toast.success("Account deleted successfully")
                 signOut({callbackUrl : "/auth/login"})
             },
-            onError: (error: any) => {
-                toast.error(error.message || "Failed to delete account")
+            onError: (error) => {
+                const message = error instanceof Error ? error.message : "Failed to delete account";
+                toast.error(message)
             }
         })
     }

@@ -1,10 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import { ChevronsDownUp, ChevronUp, SlidersHorizontal, X } from 'lucide-react';
-import { Input } from '@/src/shared/components/ui/input';
-import { Checkbox } from 'radix-ui';
+import { ChevronsDownUp, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/src/shared/components/ui/button';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/src/shared/components/ui/select';
@@ -22,15 +20,8 @@ export function SearchFilters() {
     const searchParams = useSearchParams()
     const router = useRouter()
     const [isCollapsed, setIsCollapsed] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('');
-    const [selectedAction, setSelectedAction] = useState('');
-
-
-      useEffect(() => {
-    setSelectedCategory(searchParams.get("category") || "");
-    setSelectedAction(searchParams.get("action") || "");
-  }, [searchParams]);
+    const [selectedCategory, setSelectedCategory] = useState(() => searchParams.get("category") || "");
+    const [selectedAction, setSelectedAction] = useState(() => searchParams.get("action") || "");
 
  const handleApplyFilters = () => {
     const params = new URLSearchParams(searchParams.toString());
@@ -116,20 +107,6 @@ export function SearchFilters() {
                     </Select>
 
                     <UsersCombobox />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm text-muted-foreground mb-3">Immutability</label>
-                        {/* <div className="flex items-center gap-2">
-                            <Checkbox
-                                id="immutability"
-                            // checked={immutabilityFilter}
-                            // onCheckedChange={onImmutabilityChange}
-                            />
-                            <label htmlFor="immutability" className="text-sm text-gray-600 cursor-pointer">
-                                Show immutable courses
-                            </label>
-                        </div> */}
                     </div>
 
                     <div className="flex justify-end gap-2 pt-2">

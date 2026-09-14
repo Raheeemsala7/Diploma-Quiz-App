@@ -14,6 +14,7 @@ import { getServerSession } from "next-auth"
 import Link from "next/link"
 import React from "react"
 import { SidebarNav } from "./_components/sidebar-nav"
+import { ThemeToggle } from "@/src/shared/components/ui/theme-toggle"
 
 interface IProps {
   children: React.ReactNode
@@ -33,7 +34,9 @@ const layoutDashboard = async ({ children, admin, user }: IProps) => {
           <Link href="/" aria-label="Exam App home">
             <LogoApp onDark />
           </Link>
-          <Sheet>
+          <div className="flex items-center gap-1">
+            <ThemeToggle className="text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" />
+            <Sheet>
             <SheetTrigger asChild>
               <Button
                 variant="ghost"
@@ -72,6 +75,7 @@ const layoutDashboard = async ({ children, admin, user }: IProps) => {
               </div>
             </SheetContent>
           </Sheet>
+          </div>
         </div>
       </header>
 
@@ -79,9 +83,12 @@ const layoutDashboard = async ({ children, admin, user }: IProps) => {
         {/* Desktop sidebar */}
         <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col bg-sidebar text-sidebar-foreground lg:flex">
           <div className="flex h-full flex-col px-4 pt-6 pb-4">
-            <Link href="/" aria-label="Exam App home" className="px-2">
-              <LogoApp onDark />
-            </Link>
+            <div className="flex items-center justify-between px-2">
+              <Link href="/" aria-label="Exam App home">
+                <LogoApp onDark />
+              </Link>
+              <ThemeToggle className="text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" />
+            </div>
             <div className="mt-6 min-h-0 flex-1">
               <SidebarNav user={userData?.user} isAdmin={isAdmin} />
             </div>
