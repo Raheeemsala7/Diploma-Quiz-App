@@ -1,23 +1,23 @@
 import React from "react"
-import { BookOpenCheck, Brain, RectangleEllipsis } from "lucide-react"
+import { BadgeCheck, GraduationCap, TimerReset } from "lucide-react"
 import LogoApp from "@/src/shared/components/icons/Logo"
 import { ThemeToggle } from "@/src/shared/components/ui/theme-toggle"
 
 const features = [
   {
-    icon: Brain,
-    title: "Tailored Diplomas",
-    desc: "Choose from specialized tracks like Frontend, Backend, and Mobile Development.",
+    icon: GraduationCap,
+    title: "Diploma tracks",
+    desc: "Focused paths — Frontend, Backend, Mobile — built around the skills you want to prove.",
   },
   {
-    icon: BookOpenCheck,
-    title: "Focused Exams",
-    desc: "Access topic-specific tests including HTML, CSS, JavaScript, and more.",
+    icon: TimerReset,
+    title: "Timed exams",
+    desc: "Real countdowns on every exam. When time is up, the exam submits itself.",
   },
   {
-    icon: RectangleEllipsis,
-    title: "Smart Multi-Step Forms",
-    desc: "A refined registration flow that keeps on-boarding clear and effortless.",
+    icon: BadgeCheck,
+    title: "Instant results",
+    desc: "A clear score and a question-by-question breakdown the moment you finish.",
   },
 ]
 
@@ -41,9 +41,14 @@ const layout = ({ children }: { children: React.ReactNode }) => {
         </div>
 
         <div className="relative max-w-md space-y-10">
+          <span className="inline-flex w-fit items-center rounded-full border border-sidebar-primary/30 bg-sidebar-primary/10 px-3 py-1 text-xs font-medium text-sidebar-primary">
+            Diploma-based exam platform
+          </span>
+
           <h2 className="text-4xl leading-tight font-semibold tracking-tight">
             Elevate your learning journey with our smart exam platform.
           </h2>
+
           <ul className="space-y-6">
             {features.map(({ icon: Icon, title, desc }) => (
               <li key={title} className="flex gap-4">
@@ -61,9 +66,12 @@ const layout = ({ children }: { children: React.ReactNode }) => {
           </ul>
         </div>
 
-        <p className="relative text-sm text-sidebar-foreground/45">
-          Your progress, exams, and diplomas in one place.
-        </p>
+        <div className="relative flex items-center gap-4">
+          <span className="h-px flex-1 bg-sidebar-border" />
+          <p className="text-sm whitespace-nowrap text-sidebar-foreground/45">
+            Your progress, exams, and diplomas in one place.
+          </p>
+        </div>
       </div>
 
       {/* Form panel */}
@@ -72,7 +80,9 @@ const layout = ({ children }: { children: React.ReactNode }) => {
         <div className="mb-10 lg:hidden">
           <LogoApp />
         </div>
-        <div className="w-full max-w-md">{children}</div>
+        <div className="w-full max-w-md rounded-xl bg-card p-6 ring-1 ring-foreground/10 sm:p-8">
+          {children}
+        </div>
       </div>
     </div>
   )

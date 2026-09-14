@@ -34,7 +34,6 @@ export const verifyCodeEmailApi = async ({ email, code }: { email: string, code:
     });
 
     const data: IApiResponse<void> = await res.json();
-    console.log(data)
     if (!data.status) {
         throw new Error(data.message || "Something went wrong");
     }
@@ -44,7 +43,6 @@ export const verifyCodeEmailApi = async ({ email, code }: { email: string, code:
 
 
 export const registerApi = async (payload: IRegisterType) => {
-    console.log(`${process.env.API_URL}/auth/register`)
     const res = await fetch(`${process.env.API_URL}/auth/register`, {
         method: "POST",
         headers: {
@@ -55,7 +53,6 @@ export const registerApi = async (payload: IRegisterType) => {
 
 
     const data: IApiResponse<IAuthResponse> = await res.json();
-    console.log(data)
     if (!data.status) {
         throw new Error(data.message || "Something went wrong");
     }

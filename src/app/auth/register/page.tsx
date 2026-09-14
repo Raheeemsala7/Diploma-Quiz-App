@@ -1,18 +1,18 @@
 "use client";
-import { Button } from "@/src/shared/components/ui/button";
-import { Field, FieldError, FieldLabel } from "@/src/shared/components/ui/field";
-import { Input } from "@/src/shared/components/ui/input";
-import Link from "next/link";
-import { Controller, useForm } from "react-hook-form";
+
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Check, ChevronRight, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { sendEmailVerification, verifyCodeEmail } from "@/src/features/auth/hooks/hooks";
 import {
     RegistrationFormStep1Type,
     RegistrationFormStep3Type,
     registrationStep1Schema,
     registrationStep3Schema,
 } from "@/src/shared/lib/zodSchema";
-import { ChevronRight, DiamondIcon, Loader2 } from "lucide-react";
-import {  sendEmailVerification, verifyCodeEmail } from "@/src/features/auth/hooks/hooks";
 import {
     Stepper,
     StepperIndicator,
@@ -21,24 +21,27 @@ import {
     StepperSeparator,
     StepperTrigger,
 } from "@/src/shared/components/reui/stepper";
-import { useState } from "react";
+import { Button } from "@/src/shared/components/ui/button";
+import { Field, FieldError, FieldLabel } from "@/src/shared/components/ui/field";
+import { Input } from "@/src/shared/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/src/shared/components/ui/input-otp";
-import { toast } from "sonner";
+import AuthHeading from "../_components/auth-heading";
 import CountryPhoneSelector from "./_components/country-phone-selector";
 import Step4PasswordForm from "./_components/Step4PasswordForm";
 
-
 const steps = [
-    { step: 1, label: "Account", icon: DiamondIcon },
-    { step: 2, label: "Email", icon: DiamondIcon },
-    { step: 3, label: "Security", icon: DiamondIcon },
-    { step: 4, label: "Finish", icon: DiamondIcon },
+    { step: 1, label: "Account" },
+    { step: 2, label: "Email" },
+    { step: 3, label: "Security" },
+    { step: 4, label: "Finish" },
 ];
+
+const otpFields = Array.from({ length: 6 }, (_, index) => index);
 
 const RegisterPage = () => {
     const [step, setStep] = useState(1);
     const [email, setEmail] = useState("");
- 
+
     const [userInfo, setUserInfo] = useState<RegistrationFormStep3Type>({
         firstName: "",
         lastName: "",
@@ -48,8 +51,8 @@ const RegisterPage = () => {
         email: "",
     });
 
-    const { mutateAsync, isPending } = sendEmailVerification();
-    const { mutateAsync: verifyCodeEmailAsync, isPending: verifyCodeEmailIsPending, data: verifyCodeEmailData } = verifyCodeEmail();
+    const { mutateAsync: sendVerificationEmailAsync, isPending: isSendingEmail } = sendEmailVerification();
+    const { mutateAsync: verifyCodeEmailAsync, isPending: isVerifyingCode } = verifyCodeEmail();
 
     const form = useForm<RegistrationFormStep1Type>({
         resolver: zodResolver(registrationStep1Schema),
@@ -57,6 +60,7 @@ const RegisterPage = () => {
             email: "",
         },
     });
+
     const formStep3 = useForm<RegistrationFormStep3Type>({
         resolver: zodResolver(registrationStep3Schema),
         defaultValues: {
@@ -68,316 +72,301 @@ const RegisterPage = () => {
         },
     });
 
-
-
     async function onSubmit(data: RegistrationFormStep1Type) {
-        console.log(data);
-        await mutateAsync(data.email);
-        setEmail(data.email);
-        setStep(2);
+        try {
+            await sendVerificationEmailAsync(data.email);
+            setEmail(data.email);
+            setStep(2);
+        } catch (error) {
+            const message = error as Error;
+            toast.error(message?.message || "Unable to send the verification email.");
+        }
     }
 
     async function onVerifyCodeSubmit({ code }: { code: string }) {
-
-        await verifyCodeEmailAsync({ email, code });
-        toast.success(verifyCodeEmailData?.message || "Verification code verified");
-        setStep(3);
-
+        try {
+            const res = await verifyCodeEmailAsync({ email, code });
+            toast.success(res?.message || "Email verified");
+            setStep(3);
+        } catch (error) {
+            const message = error as Error;
+            toast.error(message?.message || "Verification failed. Please check the code.");
+        }
     }
 
-    async function onRegisterFormStep3(data: RegistrationFormStep3Type) {
-        console.log(data);
+    function onRegisterFormStep3(data: RegistrationFormStep3Type) {
         setUserInfo({
             ...data,
-            email
+            email,
         });
         setStep(4);
     }
 
-
-
-
     return (
-        <>
+        <div className="space-y-8">
+            {/* Step indicator — controlled so it follows the actual step state */}
+            <Stepper value={step} onValueChange={setStep} className="w-full">
+                <StepperNav className="w-full">
+                    {steps.map(({ step: s, label }) => (
+                        <StepperItem key={s} step={s}>
+                            <StepperTrigger className="group flex-col gap-1.5">
+                                <StepperIndicator className="size-7 text-xs font-semibold">
+                                    {s < step ? <Check className="size-4" /> : s}
+                                </StepperIndicator>
+                                <span className="text-xs font-medium text-muted-foreground group-data-[state=active]:text-foreground group-data-[state=completed]:text-foreground">
+                                    {label}
+                                </span>
+                            </StepperTrigger>
+                            {s !== steps.length && (
+                                <StepperSeparator className="mx-1 data-[state=completed]:bg-primary" />
+                            )}
+                        </StepperItem>
+                    ))}
+                </StepperNav>
+            </Stepper>
+
             {step === 1 ? (
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                    <h4 className="text-3xl font-bold mb-4">Create Account</h4>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                    <AuthHeading
+                        title="Create your account"
+                        description="Start with your email address — we’ll verify it before we continue."
+                    />
 
                     <Controller
                         name="email"
                         control={form.control}
                         render={({ field, fieldState }) => (
                             <Field>
-                                <FieldLabel className="font-mono">Email</FieldLabel>
+                                <FieldLabel htmlFor="email">Email</FieldLabel>
                                 <Input
-                                    className="rounded-sm px-4 py-6 border border-[#E5E7EB] rounded-0 font-mono"
+                                    id="email"
+                                    autoComplete="email"
+                                    className="h-11 px-3.5 text-sm"
                                     type="email"
                                     placeholder="user@example.com"
+                                    aria-invalid={fieldState.invalid}
                                     {...field}
                                 />
                                 {fieldState.invalid && (
-                                    <FieldError
-                                        className="text-red-500"
-                                        errors={[fieldState.error]}
-                                    />
+                                    <FieldError errors={[fieldState.error]} />
                                 )}
                             </Field>
                         )}
                     />
 
                     <Button
-                        disabled={isPending}
                         type="submit"
-                        className="w-full bg-[#EFF6FF] text-center font-mono text-[#1F2937] py-5"
-                        variant={"secondary"}
+                        className="h-11 w-full"
+                        disabled={isSendingEmail}
                     >
-                        {isPending ? (
+                        {isSendingEmail ? (
                             <>
-                                Sending verification email...{" "}
-                                <Loader2 className="size-4 animate-spin " />
+                                <Loader2 className="size-4 animate-spin" />
+                                Sending verification email…
                             </>
                         ) : (
                             <>
-                                Next <ChevronRight className="size-4" />
+                                Continue
+                                <ChevronRight />
                             </>
                         )}
                     </Button>
 
-                    <div className="flex gap-1 justify-center">
-                        <span>Already have an account? </span>
+                    <p className="text-center text-sm text-muted-foreground">
+                        Already have an account?{" "}
                         <Link
-                            href={"/auth/login"}
-                            className="text-sm text-gray-400 hover:text-[#1F2937] hover:underline transition-all text-center block"
+                            href="/auth/login"
+                            className="font-medium text-primary underline-offset-4 hover:underline"
                         >
-                            Login
+                            Sign in
                         </Link>
-                    </div>
+                    </p>
                 </form>
-            ) :
+            ) : step === 2 ? (
+                <div className="space-y-6">
+                    <AuthHeading
+                        title="Check your email"
+                        description="Enter the 6-digit code we sent to:"
+                    />
 
-                step > 1 && (
-                    <div>
-                            <Stepper defaultValue={step} className="w-full max-w-2xl mx-auto">
-                                <StepperNav>
-                                    {steps.map(({ step: s, label, icon: Icon }) => (
-                                        <StepperItem key={s} step={s} >
-                                            <StepperTrigger>
-                                                <StepperIndicator
-                                                    className={`group !bg-transparent
-                                                        transition-all duration-200 size-6
-                                                        data-[state=active]:!bg-blue-100 data-[state=active]:shadow-[0px_0px_3px_6px_#DBEAFE]
-                                                    `}
-                                                >
-                                                    <div>
-                                                        <Icon className="bg-transparent group-data-[state=completed]:!stroke-blue-600 group-data-[state=active]:!stroke-blue-600 group-data-[state=completed]:!fill-blue-600 group-data-[state=active]:!fill-blue-600 group-data-[state=inactive]:!stroke-blue-600" size={25} />
-                                                    </div>
-                                                </StepperIndicator>
-                                            </StepperTrigger>
+                    <div className="flex items-center justify-between gap-3 rounded-md border border-border bg-muted/40 px-3.5 py-3">
+                        <span className="min-w-0 truncate text-sm font-medium">
+                            {email || "your email"}
+                        </span>
+                        <button
+                            type="button"
+                            onClick={() => setStep(1)}
+                            className="shrink-0 text-sm font-medium text-primary underline-offset-4 hover:underline"
+                        >
+                            Edit
+                        </button>
+                    </div>
 
-                                            {/* Line */}
-                                            {s !== steps.length && (
-                                                <StepperSeparator className="border-b-2 border-dashed border-blue-600 group-data-[state=completed]/step:border-solid" />
-                                            )}
-                                        </StepperItem>
-                                    ))}
-                                </StepperNav>
+                    <InputOTP
+                        maxLength={6}
+                        containerClassName="justify-center"
+                        onComplete={(code) => onVerifyCodeSubmit({ code })}
+                    >
+                        <InputOTPGroup className="gap-1">
+                            {otpFields.map((index) => (
+                                <InputOTPSlot key={index} index={index} className="size-10" />
+                            ))}
+                        </InputOTPGroup>
+                    </InputOTP>
 
+                    <div className="flex justify-center">
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            className="h-11 w-full"
+                            disabled={isVerifyingCode}
+                        >
+                            {isVerifyingCode ? (
+                                <>
+                                    <Loader2 className="size-4 animate-spin" />
+                                    Verifying…
+                                </>
+                            ) : (
+                                "Verify code"
+                            )}
+                        </Button>
+                    </div>
+                </div>
+            ) : step === 3 ? (
+                <div className="space-y-6">
+                    <AuthHeading
+                        title="Tell us about yourself"
+                        description="A few details so your profile and results stay personal."
+                    />
 
-                            </Stepper>
-
-                        {step === 2 ? (
-                            <div>
-
-
-                                <h4 className="text-3xl font-bold my-6">Create Account</h4>
-
-                                <h6 className="text-blue-600">Verify OTP</h6>
-
-                                <p>Please enter the 6-digits code we have sent to:</p>
-                                <div >
-                                    user@example.com <span onClick={() => setStep(1)} className="text-blue-600 cursor-pointer underline"> Edit</span>
-                                </div>
-
-                                <div className="flex justify-center mt-5">
-                                    <InputOTP maxLength={6} className="mx-auto font-mono"
-                                        onComplete={(data) => {
-                                            console.log(data)
-                                            onVerifyCodeSubmit({ code: data });
-                                        }}
-                                    >
-                                        <InputOTPGroup >
-                                            <InputOTPSlot className="!font-mono" index={0} />
-                                            <InputOTPSlot className="!font-mono" index={1} />
-                                            <InputOTPSlot className="!font-mono" index={2} />
-                                            <InputOTPSlot className="!font-mono" index={3} />
-                                            <InputOTPSlot className="!font-mono" index={4} />
-                                            <InputOTPSlot className="!font-mono" index={5} />
-                                        </InputOTPGroup>
-                                    </InputOTP>
-                                </div>
-
-
-                                <button disabled={verifyCodeEmailIsPending} className="w-full mt-4 hover:bg-[#EFF6FF] text-center font-mono text-[#1F2937] py-2" type="submit">
-                                    {verifyCodeEmailIsPending ? 'Verifying...' : 'Verify'}
-                                </button>
-
-                            </div>
-
-                        ) : step === 3 ? (
-                            <div>
-                                <h4 className="text-3xl font-bold my-4">Create Account</h4>
-
-                                <h4 className="text-[#155DFC] text-2xl mb-8 font-bold">Tell us more about you</h4>
-                                <form onSubmit={formStep3.handleSubmit(onRegisterFormStep3)} className="space-y-4">
-                                    {/* First Name + Last Name — side by side */}
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <Controller
-                                            name="firstName"
-                                            control={formStep3.control}
-                                            render={({ field, fieldState }) => (
-                                                <Field>
-                                                    <FieldLabel className="font-mono">
-                                                        First name <span className="text-red-500">*</span>
-                                                    </FieldLabel>
-                                                    <Input
-                                                        className="rounded-sm px-4 py-6 border border-[#E5E7EB] font-mono"
-                                                        type="text"
-                                                        placeholder="Ahmed"
-                                                        {...field}
-                                                    />
-                                                    {fieldState.invalid && (
-                                                        <FieldError
-                                                            className="text-red-500"
-                                                            errors={[fieldState.error]}
-                                                        />
-                                                    )}
-                                                </Field>
-                                            )}
+                    <form
+                        onSubmit={formStep3.handleSubmit(onRegisterFormStep3)}
+                        className="space-y-5"
+                    >
+                        {/* First name + Last name */}
+                        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-3">
+                            <Controller
+                                name="firstName"
+                                control={formStep3.control}
+                                render={({ field, fieldState }) => (
+                                    <Field>
+                                        <FieldLabel htmlFor="firstName">
+                                            First name <span className="text-destructive">*</span>
+                                        </FieldLabel>
+                                        <Input
+                                            id="firstName"
+                                            autoComplete="given-name"
+                                            className="h-11 px-3.5 text-sm"
+                                            type="text"
+                                            placeholder="Ahmed"
+                                            aria-invalid={fieldState.invalid}
+                                            {...field}
                                         />
+                                        {fieldState.invalid && (
+                                            <FieldError errors={[fieldState.error]} />
+                                        )}
+                                    </Field>
+                                )}
+                            />
 
-                                        <Controller
-                                            name="lastName"
-                                            control={formStep3.control}
-                                            render={({ field, fieldState }) => (
-                                                <Field>
-                                                    <FieldLabel className="font-mono">
-                                                        Last name  <span className="text-red-500">*</span>
-                                                    </FieldLabel>
-                                                    <Input
-                                                        className="rounded-sm px-4 py-6 border border-[#E5E7EB] font-mono"
-                                                        type="text"
-                                                        placeholder="Abdullah"
-                                                        {...field}
-                                                    />
-                                                    {fieldState.invalid && (
-                                                        <FieldError
-                                                            className="text-red-500"
-                                                            errors={[fieldState.error]}
-                                                        />
-                                                    )}
-                                                </Field>
-                                            )}
+                            <Controller
+                                name="lastName"
+                                control={formStep3.control}
+                                render={({ field, fieldState }) => (
+                                    <Field>
+                                        <FieldLabel htmlFor="lastName">
+                                            Last name <span className="text-destructive">*</span>
+                                        </FieldLabel>
+                                        <Input
+                                            id="lastName"
+                                            autoComplete="family-name"
+                                            className="h-11 px-3.5 text-sm"
+                                            type="text"
+                                            placeholder="Abdullah"
+                                            aria-invalid={fieldState.invalid}
+                                            {...field}
                                         />
-                                    </div>
+                                        {fieldState.invalid && (
+                                            <FieldError errors={[fieldState.error]} />
+                                        )}
+                                    </Field>
+                                )}
+                            />
+                        </div>
 
-                                    {/* Username */}
+                        {/* Username */}
+                        <Controller
+                            name="username"
+                            control={formStep3.control}
+                            render={({ field, fieldState }) => (
+                                <Field>
+                                    <FieldLabel htmlFor="username">
+                                        Username <span className="text-destructive">*</span>
+                                    </FieldLabel>
+                                    <Input
+                                        id="username"
+                                        autoComplete="username"
+                                        className="h-11 px-3.5 text-sm"
+                                        type="text"
+                                        placeholder="user123"
+                                        aria-invalid={fieldState.invalid}
+                                        {...field}
+                                    />
+                                    {fieldState.invalid && (
+                                        <FieldError errors={[fieldState.error]} />
+                                    )}
+                                </Field>
+                            )}
+                        />
+
+                        {/* Phone with country selector */}
+                        <Field>
+                            <FieldLabel>
+                                Phone <span className="text-destructive">*</span>
+                            </FieldLabel>
+                            <Controller
+                                name="countryCode"
+                                control={formStep3.control}
+                                render={({ field: countryField, fieldState: countryState }) => (
                                     <Controller
-                                        name="username"
+                                        name="phone"
                                         control={formStep3.control}
-                                        render={({ field, fieldState }) => (
-                                            <Field>
-                                                <FieldLabel className="font-mono">
-                                                    Username  <span className="text-red-500">*</span>
-                                                </FieldLabel>
-                                                <Input
-                                                    className="rounded-sm px-4 py-6 border border-[#E5E7EB] font-mono"
-                                                    type="text"
-                                                    placeholder="user123"
-                                                    {...field}
+                                        render={({ field: phoneField, fieldState: phoneState }) => (
+                                            <>
+                                                <CountryPhoneSelector
+                                                    selectedCountryCode={countryField.value}
+                                                    onCountryChange={countryField.onChange}
+                                                    phoneValue={phoneField.value}
+                                                    onPhoneChange={phoneField.onChange}
+                                                    phoneRef={phoneField.ref}
+                                                    phoneError={phoneState.error}
+                                                    countryError={countryState.error}
                                                 />
-                                                {fieldState.invalid && (
+                                                {(phoneState.invalid || countryState.invalid) && (
                                                     <FieldError
-                                                        className="text-red-500"
-                                                        errors={[fieldState.error]}
+                                                        errors={[
+                                                            phoneState.error,
+                                                            countryState.error,
+                                                        ]}
                                                     />
                                                 )}
-                                            </Field>
+                                            </>
                                         )}
                                     />
-
-                                    {/* Phone with Country Selector */}
-                                    <Field>
-                                        <FieldLabel className="font-mono">Phone  <span className="text-red-500">*</span></FieldLabel>
-                                        <Controller
-                                            name="countryCode"
-                                            control={formStep3.control}
-                                            render={({ field: countryField, fieldState: countryState }) => (
-                                                <Controller
-                                                    name="phone"
-                                                    control={formStep3.control}
-                                                    render={({ field: phoneField, fieldState: phoneState }) => (
-                                                        <>
-                                                            <CountryPhoneSelector
-                                                                selectedCountryCode={countryField.value}
-                                                                onCountryChange={countryField.onChange}
-                                                                phoneValue={phoneField.value}
-                                                                onPhoneChange={phoneField.onChange}
-                                                                phoneRef={phoneField.ref}
-                                                                phoneError={phoneState.error}
-                                                                countryError={countryState.error}
-                                                            />
-                                                            {(phoneState.invalid || countryState.invalid) && (
-                                                                <FieldError
-                                                                    className="text-red-500"
-                                                                    errors={[phoneState.error, countryState.error]}
-                                                                />
-                                                            )}
-                                                        </>
-                                                    )}
-                                                />
-                                            )}
-                                        />
-                                    </Field>
-
-                                    {/* Submit */}
-                                    <Button
-                                        disabled={isPending}
-                                        type="submit"
-                                        className="w-full bg-[#EFF6FF] text-center font-mono text-[#1F2937] py-5"
-                                        variant="secondary"
-                                    >
-                                        {isPending ? (
-                                            <>
-                                                Saving your info…{" "}
-                                                <Loader2 className="size-4 animate-spin ml-1" />
-                                            </>
-                                        ) : (
-                                            <>
-                                                Next <ChevronRight className="size-4 ml-1" />
-                                            </>
-                                        )}
-                                    </Button>
-
-                                </form>
-                            </div>
-                        ) : step === 4 ? (
-                            <Step4PasswordForm
-                                userInfo={userInfo}
+                                )}
                             />
-                        ) : "ff"
+                        </Field>
 
-                        }
-                    </div>
-
-                )
-
-
-
-
-
-            }
-
-        </>
+                        <Button type="submit" className="h-11 w-full">
+                            Continue
+                            <ChevronRight />
+                        </Button>
+                    </form>
+                </div>
+            ) : (
+                <Step4PasswordForm userInfo={userInfo} />
+            )}
+        </div>
     );
 };
 

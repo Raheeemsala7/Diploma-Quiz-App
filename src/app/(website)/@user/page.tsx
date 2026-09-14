@@ -4,7 +4,10 @@ import { GraduationCap } from "lucide-react"
 const userPage = () => {
   return (
     <main className="w-full space-y-6">
-      <header className="flex items-center gap-4 rounded-lg border border-border bg-card p-5">
+      <header
+        id="diplomas"
+        className="flex scroll-mt-24 items-center gap-4 rounded-lg border border-border bg-card p-5"
+      >
         <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
           <GraduationCap className="size-6" />
         </span>

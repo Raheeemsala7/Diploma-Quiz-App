@@ -1,7 +1,10 @@
-import { COUNTRIES } from "@/src/shared/constant";
+"use client"
+
 import { ChevronDown, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import ReactCountryFlag from "react-country-flag";
+import { COUNTRIES } from "@/src/shared/constant";
+import { cn } from "@/src/shared/lib/utils";
 
 interface CountryPhoneSelectorProps {
     selectedCountryCode: string;
@@ -60,27 +63,36 @@ function CountryPhoneSelector({
         <div className="relative" ref={dropdownRef}>
             {/* Input row */}
             <div
-                className={`flex items-center border rounded-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-0 ${hasError ? "border-red-400" : "border-[#E5E7EB]"
-                    }`}
+                className={cn(
+                    "flex items-center rounded-md border transition-colors focus-within:ring-3 focus-within:ring-ring/50",
+                    hasError
+                        ? "border-destructive focus-within:border-destructive"
+                        : "border-input"
+                )}
             >
                 {/* Country trigger */}
                 <button
                     type="button"
                     onClick={() => setOpen((v) => !v)}
-                    className="flex items-center gap-1.5 px-3 py-3 border-r border-[#E5E7EB] text-sm font-mono text-gray-700 shrink-0 hover:bg-gray-50 transition-colors focus:outline-none"
+                    aria-haspopup="listbox"
+                    aria-expanded={open}
+                    className="flex shrink-0 items-center gap-1.5 border-r border-input px-3 py-3 text-sm transition-colors hover:bg-muted focus:outline-none"
                 >
-                    {/* <span className="text-lg leading-none">{selectedCountry.flag}</span> */}
-                    <span className="text-xs text-gray-500 hidden sm:inline">
+                    <span className="hidden sm:inline">
                         <ReactCountryFlag
                             countryCode={selectedCountry.code}
                             svg
                             style={{ width: "20px", height: "20px" }}
                         />
                     </span>
-                    <span className="text-xs font-semibold ml-2">{selectedCountry.code}({selectedCountry.dialCode})</span>
+                    <span className="font-semibold">
+                        {selectedCountry.code}({selectedCountry.dialCode})
+                    </span>
                     <ChevronDown
-                        className={`size-3 text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""
-                            }`}
+                        className={cn(
+                            "size-3.5 text-muted-foreground transition-transform duration-200",
+                            open ? "rotate-180" : ""
+                        )}
                     />
                 </button>
 
@@ -88,33 +100,34 @@ function CountryPhoneSelector({
                 <input
                     ref={phoneRef}
                     type="tel"
+                    inputMode="numeric"
                     placeholder="1012345678"
                     value={phoneValue}
                     onChange={(e) => onPhoneChange(e.target.value.replace(/\D/g, ""))}
-                    className="flex-1 px-4 py-3 text-sm font-mono bg-transparent outline-none placeholder:text-muted-foreground"
+                    className="h-11 min-w-0 flex-1 bg-transparent px-3.5 text-sm outline-none placeholder:text-muted-foreground"
                 />
             </div>
 
             {/* Dropdown */}
             {open && (
-                <div className="absolute z-50 top-full left-0 mt-1 w-72 bg-white border border-[#E5E7EB] rounded-md shadow-lg overflow-hidden">
+                <div className="absolute top-full left-0 z-50 mt-1 w-72 overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-lg">
                     {/* Search bar */}
-                    <div className="flex items-center gap-2 px-3 py-2 border-b border-[#E5E7EB]">
-                        <Search className="size-3.5 text-gray-400 shrink-0" />
+                    <div className="flex items-center gap-2 border-b border-border px-3 py-2">
+                        <Search className="size-3.5 shrink-0 text-muted-foreground" />
                         <input
                             ref={searchRef}
                             type="text"
                             placeholder="Search country..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="flex-1 text-sm font-mono outline-none bg-transparent placeholder:text-gray-400"
+                            className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
                         />
                     </div>
 
                     {/* Country list */}
                     <ul className="max-h-52 overflow-y-auto">
                         {filtered.length === 0 ? (
-                            <li className="px-3 py-3 text-sm text-gray-400 font-mono text-center">
+                            <li className="px-3 py-3 text-sm text-muted-foreground">
                                 No countries found
                             </li>
                         ) : (
@@ -127,12 +140,12 @@ function CountryPhoneSelector({
                                             setOpen(false);
                                             setSearch("");
                                         }}
-                                        className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm font-mono hover:bg-[#EFF6FF] transition-colors text-left ${selectedCountryCode === country.code
-                                            ? "bg-[#EFF6FF] text-blue-700 font-semibold"
-                                            : "text-gray-700"
-                                            }`}
+                                        className={cn(
+                                            "flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground",
+                                            selectedCountryCode === country.code &&
+                                                "bg-accent font-semibold text-accent-foreground"
+                                        )}
                                     >
-                                        {/* <span className="text-lg leading-none">{country.flag}</span> */}
                                         <ReactCountryFlag
                                             className="emojiFlag"
                                             countryCode={country.code}
@@ -140,8 +153,10 @@ function CountryPhoneSelector({
                                             style={{ width: "20px", height: "20px" }}
                                         />
 
-                                        <span className="flex-1 truncate">{country.name}</span>
-                                        <span className="text-gray-400 text-xs shrink-0">
+                                        <span className="min-w-0 flex-1 truncate">
+                                            {country.name}
+                                        </span>
+                                        <span className="shrink-0 text-xs text-muted-foreground">
                                             {country.dialCode}
                                         </span>
                                     </button>
@@ -155,4 +170,4 @@ function CountryPhoneSelector({
     );
 }
 
-export default CountryPhoneSelector
+export default CountryPhoneSelector;
