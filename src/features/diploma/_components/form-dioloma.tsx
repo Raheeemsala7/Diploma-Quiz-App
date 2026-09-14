@@ -44,7 +44,7 @@ const FormDiploma = ({ initialData, isEdit, id }: IProps) => {
             mutateUpdated({ values, id : id ?? "" }, {
                 onSuccess() {
                     toast.success("done update diploma")
-                    router.push("/")
+                    router.push("/dashboard")
                 },
                 onError(error) {
                     toast.error(error.message || "something error")
@@ -55,7 +55,7 @@ const FormDiploma = ({ initialData, isEdit, id }: IProps) => {
             mutate(values, {
                 onSuccess() {
                     toast.success("done create diploma")
-                    router.push("/")
+                    router.push("/dashboard")
                 },
                 onError(error) {
                     toast.error(error.message || "something error")

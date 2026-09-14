@@ -7,9 +7,17 @@ import {
   TimerReset,
   XCircle,
 } from "lucide-react"
+import type { Metadata } from "next"
 import Link from "next/link"
+import LogoApp from "@/src/shared/components/icons/Logo"
 import { buttonVariants } from "@/src/shared/components/ui/button"
 import { cn } from "@/src/shared/lib/utils"
+
+export const metadata: Metadata = {
+  title: "Exam App — Prove your skills, exam by exam",
+  description:
+    "Diploma-based exam platform. Pick a track, take timed exams, and see your score with a full answer review.",
+}
 
 const overview = [
   {
@@ -168,7 +176,30 @@ function ExamResultPreview() {
 
 const HomePage = () => {
   return (
-    <div className="w-full space-y-20">
+    <div className="min-h-dvh bg-background">
+      <div className="mx-auto w-full max-w-6xl px-4 lg:px-8">
+        <header className="flex h-16 items-center justify-between lg:h-20">
+          <Link href="/" aria-label="Exam App home">
+            <LogoApp />
+          </Link>
+          <nav className="flex items-center gap-2" aria-label="Account">
+            <Link
+              href="/auth/login"
+              className={cn(buttonVariants({ variant: "ghost" }), "h-9 px-4")}
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/auth/register"
+              className={cn(buttonVariants(), "h-9 px-4")}
+            >
+              Create account
+            </Link>
+          </nav>
+        </header>
+      </div>
+
+      <div className="mx-auto w-full max-w-6xl space-y-20 px-4 pb-20 lg:px-8 lg:pb-28">
       {/* Hero */}
       <section className="relative overflow-hidden rounded-xl border border-border bg-card">
         {/* Soft clay glow, echoing the auth brand panel */}
@@ -197,7 +228,7 @@ const HomePage = () => {
 
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link
-                href="#diplomas"
+                href="/dashboard"
                 className={cn(buttonVariants(), "h-11 px-5")}
               >
                 Browse your diplomas
@@ -293,11 +324,11 @@ const HomePage = () => {
             Your next diploma is one exam away.
           </h2>
           <p className="text-sm leading-relaxed text-sidebar-foreground/70 sm:text-base">
-            Browse the catalog below, pick the track that fits your goals, and
+            Create an account, pick the track that fits your goals, and
             complete your first timed exam today.
           </p>
           <Link
-            href="#diplomas"
+            href="/dashboard"
             className={cn(
               buttonVariants(),
               "h-11 px-6 shadow-sm"
@@ -307,6 +338,7 @@ const HomePage = () => {
           </Link>
         </div>
       </section>
+      </div>
     </div>
   )
 }

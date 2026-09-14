@@ -16,7 +16,7 @@ const Page = async ({ params }: IPageProps) => {
     <section className="space-y-6">
       <header className="flex items-center gap-3">
         <Link
-          href="/"
+          href="/dashboard"
           aria-label="Back to diplomas"
           className="grid size-10 shrink-0 place-items-center rounded-lg border border-border bg-card text-foreground transition-colors hover:bg-muted"
         >

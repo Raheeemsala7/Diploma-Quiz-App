@@ -33,14 +33,14 @@ interface SidebarNavProps {
 
 const navItems = (isAdmin: boolean) =>
   [
-    { href: "/", label: "Diploma", icon: GraduationCap, match: "exact" as const },
+    { href: "/dashboard", label: "Diploma", icon: GraduationCap, match: "exact" as const },
     ...(isAdmin
       ? [
-          { href: "/exams", label: "Exams", icon: BookOpenCheck, match: "prefix" as const },
-          { href: "/audit-log", label: "Audit Log", icon: ScrollText, match: "prefix" as const },
+          { href: "/dashboard/exams", label: "Exams", icon: BookOpenCheck, match: "prefix" as const },
+          { href: "/dashboard/audit-log", label: "Audit Log", icon: ScrollText, match: "prefix" as const },
         ]
       : []),
-    { href: "/account", label: "Account", icon: UserRound, match: "prefix" as const },
+    { href: "/dashboard/account", label: "Account", icon: UserRound, match: "prefix" as const },
   ]
 
 export function SidebarNav({ user, isAdmin }: SidebarNavProps) {
@@ -110,13 +110,13 @@ export function SidebarNav({ user, isAdmin }: SidebarNavProps) {
           >
             <DropdownMenuGroup>
               <DropdownMenuItem className="flex items-center gap-2 p-3" asChild>
-                <Link href="/account">
+                <Link href="/dashboard/account">
                   <UserRound />
                   Account
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className="flex items-center gap-2 p-3" asChild>
-                <Link href="/">
+                <Link href="/dashboard">
                   <Bolt />
                   Dashboard
                 </Link>

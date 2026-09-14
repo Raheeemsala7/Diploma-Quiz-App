@@ -18,7 +18,6 @@ import {
 import { Input } from "@/src/shared/components/ui/input"
 
 const LoginForm = () => {
-  const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [signInError, setSignInError] = useState<string | null>(null)
 
@@ -36,7 +35,8 @@ const LoginForm = () => {
     const res = await signIn("credentials", {
       username: data.username,
       password: data.password,
-      redirect: false,
+      redirect: true,
+      callbackUrl:"/dashboard"
     })
 
     if (!res?.ok) {
@@ -50,8 +50,6 @@ const LoginForm = () => {
     }
 
     toast.success("Welcome back!")
-    router.push("/")
-    router.refresh()
   }
 
   return (

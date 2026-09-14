@@ -6,8 +6,8 @@ import { CircleUser, Lock } from "lucide-react"
 import { cn } from "@/src/shared/lib/utils"
 
 const items = [
-  { href: "/account", label: "Profile", icon: CircleUser },
-  { href: "/account/change-password", label: "Change Password", icon: Lock },
+  { href: "/dashboard/account", label: "Profile", icon: CircleUser },
+  { href: "/dashboard/account/change-password", label: "Change Password", icon: Lock },
 ]
 
 export function AccountNav() {
@@ -18,8 +18,8 @@ export function AccountNav() {
       <ul className="space-y-1">
         {items.map(({ href, label, icon: Icon }) => {
           const active =
-            href === "/account"
-              ? pathname === "/account"
+            href === "/dashboard/account"
+              ? pathname === "/dashboard/account"
               : pathname.startsWith(href)
           return (
             <li key={href}>

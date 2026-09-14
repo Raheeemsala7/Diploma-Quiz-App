@@ -1,79 +1,56 @@
-import { getToken } from "next-auth/jwt";
-import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt"
+import { NextRequest, NextResponse } from "next/server"
 
+export const config = {
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+}
 
-const privateRoutes = new Set([
-    '/dashboard',
-    "/account",
-    "/account/change-password",
-    
+const authRoutes: readonly string[] = ["/auth/login", "/auth/register"]
 
-]);
-const authRoutes = new Set([
-    '/auth/login',
-    '/auth/register',
-]);
+// Admin-only areas. Access is refused here on the server — never rely on
+// hiding the UI alone.
+const adminRoutePrefixes: readonly string[] = [
+  "/dashboard/exams",
+  "/dashboard/audit-log",
+  "/dashboard/create-new-diploma",
+]
+
+const isPublicPath = (pathname: string) =>
+  pathname === "/" || authRoutes.includes(pathname)
+
+const isAuthPath = (pathname: string) => authRoutes.includes(pathname)
+
+const isAdminPath = (pathname: string) =>
+  adminRoutePrefixes.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+  )
+
 export default async function proxy(req: NextRequest) {
+  const pathname = req.nextUrl.pathname
 
-    let pathname = req.nextUrl.pathname
+  const token = await getToken({ req })
+  const isLoggedIn = !!token?.token
 
+  // Public pages stay reachable by everyone. Logged-in users hitting an auth
+  // page are sent straight to the dashboard instead.
+  if (isPublicPath(pathname)) {
+    if (isLoggedIn && isAuthPath(pathname)) {
+      return NextResponse.redirect(new URL("/dashboard", req.nextUrl.origin))
+    }
+    return NextResponse.next()
+  }
 
-
-    const token = await getToken({ req });
-
-    // if (privateRoutes.has(pathname)) {
-    //     if (!token?.token) {
-    //         const redirectUrl = new URL('/auth/login', req.nextUrl.origin);
-    //         redirectUrl.searchParams.set('callbackUrl', pathname)
-    //         return NextResponse.redirect(redirectUrl)
-    //     }
-    //     return NextResponse.next()
-    // }
-
-    // if (authRoutes.has(pathname)) {
-    //     if (token?.token) {
-    //         return NextResponse.redirect(new URL("/", req.nextUrl))
-    //     }
-
-    //     return NextResponse.next();
-
-    // }
-
-
-    const isLoggedIn = !!token?.token
-
-  const isAuthRoute = authRoutes.has(pathname)
-
-  // ✅ حماية كل حاجة ماعدا auth routes
-  const isProtected =
-    !isAuthRoute &&
-    !pathname.startsWith("/api") &&
-    !pathname.startsWith("/_next") &&
-    !pathname.startsWith("/favicon.ico")
-
-  // 🔐 لو route محمي ومش عامل login
-  if (isProtected && !isLoggedIn) {
+  // Everything else (the dashboard) requires login.
+  if (!isLoggedIn) {
     const redirectUrl = new URL("/auth/login", req.nextUrl.origin)
     redirectUrl.searchParams.set("callbackUrl", pathname)
-
     return NextResponse.redirect(redirectUrl)
   }
 
-  // 🔁 لو عامل login وداخل auth routes
-  if (isAuthRoute && isLoggedIn) {
-    return NextResponse.redirect(new URL("/", req.nextUrl))
+  const role = (token?.user as { role?: string } | undefined)?.role
+  if (isAdminPath(pathname) && role !== "ADMIN") {
+    return NextResponse.redirect(new URL("/dashboard", req.nextUrl.origin))
   }
 
-}
-
-
-export const config = {
-    /*
-      * Match all request paths except for the ones starting with:
-      * - api (API routes)
-      * - _next/static (static files)
-      * - _next/image (image optimization files)
-      * - favicon.ico, sitemap.xml, robots.txt (metadata files)
-   */
-    matcher: '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)'
+  return NextResponse.next()
 }
