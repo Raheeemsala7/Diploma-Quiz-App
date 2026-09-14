@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 
 const privateRoutes = new Set([
-    '/',
+    '/dashboard',
     "/account",
     "/account/change-password",
     

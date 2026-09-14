@@ -13,7 +13,7 @@ import { Menu, X } from "lucide-react"
 import { getServerSession } from "next-auth"
 import Link from "next/link"
 import React from "react"
-import { SidebarNav } from "./_components/sidebar-nav"
+import { SidebarNav } from "../_components/sidebar-nav"
 import { ThemeToggle } from "@/src/shared/components/ui/theme-toggle"
 
 interface IProps {

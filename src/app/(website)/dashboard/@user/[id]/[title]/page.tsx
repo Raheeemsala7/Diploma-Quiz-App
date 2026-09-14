@@ -1,6 +1,6 @@
 import { ChevronLeft } from "lucide-react"
 import Link from "next/link"
-import ExamsList from "../../../../../features/exams/_components/exams-list"
+import ExamsList from "../../../../../../features/exams/_components/exams-list"
 
 interface IPageProps {
   params: Promise<{
